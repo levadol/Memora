@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openGame } from "./helpers";
 
 test.describe("Digit Span game", () => {
   test.beforeEach(async ({ page }) => {
@@ -11,19 +12,19 @@ test.describe("Digit Span game", () => {
   });
 
   test("clicking Digit Span opens the game", async ({ page }) => {
-    await page.getByText("Digit Span").click();
+    await openGame(page, "Digit Span");
     await expect(page.getByText(/Round/i)).toBeVisible({ timeout: 5000 });
   });
 
   test("game shows round counter, score and mode", async ({ page }) => {
-    await page.getByText("Digit Span").click();
+    await openGame(page, "Digit Span");
     await expect(page.getByText(/Round/i)).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/Score/i)).toBeVisible();
     await expect(page.getByText(/Forward|Backward/)).toBeVisible();
   });
 
   test("pause button opens pause menu with quit option", async ({ page }) => {
-    await page.getByText("Digit Span").click();
+    await openGame(page, "Digit Span");
     // Wait for game board (round counter signals game is running)
     await expect(page.getByText(/Round/i)).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
@@ -31,7 +32,7 @@ test.describe("Digit Span game", () => {
   });
 
   test("quit from pause menu returns to home", async ({ page }) => {
-    await page.getByText("Digit Span").click();
+    await openGame(page, "Digit Span");
     await expect(page.getByText(/Round/i)).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await page.getByRole("button", { name: /quit/i }).click();
@@ -41,7 +42,7 @@ test.describe("Digit Span game", () => {
   test("plays one full forward round to feedback, then round counter advances", async ({
     page,
   }) => {
-    await page.getByText("Digit Span").click();
+    await openGame(page, "Digit Span");
 
     // Wait for input phase — data-sequence set when NEXT_PUBLIC_E2E=1
     await page.waitForSelector("[data-sequence]", { timeout: 15000 });
@@ -66,7 +67,7 @@ test.describe("Digit Span — backward mode via URL", () => {
     // Open Digit Span then check mode — game starts in whatever mode activeGame.mode is
     // For this test we rely on the default forward mode; backward mode is tested via the store
     await page.goto("/en");
-    await page.getByText("Digit Span").click();
+    await openGame(page, "Digit Span");
     // Default mode is forward
     await expect(page.getByText(/Forward/)).toBeVisible({ timeout: 5000 });
   });
@@ -85,6 +86,12 @@ test.describe("Digit Span — full backward round", () => {
         "backward"
       );
     });
+    // __openGame sets difficulty: null which shows the DifficultyPicker — dismiss it
+    const pickerStart = page.getByRole("button", { name: "Start", exact: true });
+    if (await pickerStart.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await page.keyboard.press("2");
+      await pickerStart.click();
+    }
     await page.waitForSelector("[data-sequence]", { timeout: 15000 });
     const rawSeq = await page.getAttribute("[data-sequence]", "data-sequence");
     const sequence: number[] = JSON.parse(rawSeq!);

@@ -1,17 +1,5 @@
 import { test, expect } from "@playwright/test";
-
-async function openTofGame(page: import("@playwright/test").Page, locale = "en") {
-  await page.goto(`/${locale}`);
-  await expect(page.getByText("True or False").first()).toBeVisible({ timeout: 5000 });
-  await page.getByText("True or False").first().click();
-  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible({ timeout: 5000 });
-  await page.getByRole("button", { name: "Start", exact: true }).click();
-  // Skip tutorial on first play
-  const skipBtn = page.getByRole("button", { name: "Skip" });
-  if (await skipBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await skipBtn.click();
-  }
-}
+import { openGame } from "./helpers";
 
 test.describe("Arithmetic True or False", () => {
   test("home page shows True or False card under Mental Arithmetic", async ({ page }) => {
@@ -23,7 +11,12 @@ test.describe("Arithmetic True or False", () => {
 
   test("full 30-item session with mixed answers, assert hits and false alarms on result", async ({ page }) => {
     test.setTimeout(90_000);
-    await openTofGame(page);
+    await page.goto("/en");
+    await openGame(page, "True or False", "easy");
+    const skipBtn = page.getByRole("button", { name: "Skip" });
+    if (await skipBtn.isVisible({ timeout: 500 }).catch(() => false)) {
+      await skipBtn.click();
+    }
 
     let hits = 0;
     let falseAlarms = 0;
@@ -67,7 +60,12 @@ test.describe("Arithmetic True or False", () => {
 
   test("pause button opens pause menu with quit option", async ({ page }) => {
     test.setTimeout(20_000);
-    await openTofGame(page);
+    await page.goto("/en");
+    await openGame(page, "True or False", "easy");
+    const skipBtn = page.getByRole("button", { name: "Skip" });
+    if (await skipBtn.isVisible({ timeout: 500 }).catch(() => false)) {
+      await skipBtn.click();
+    }
     await page.waitForSelector("[data-is-true]", { timeout: 10_000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await expect(page.getByRole("button", { name: /quit/i })).toBeVisible();
@@ -78,13 +76,10 @@ test.describe("Arithmetic True or False", () => {
 
     // Open in Hebrew locale
     await page.goto("/he");
-    await expect(page.getByText("נכון או לא נכון").first()).toBeVisible({ timeout: 5000 });
-    await page.getByText("נכון או לא נכון").first().click();
-    await expect(page.getByRole("button", { name: "התחל", exact: true })).toBeVisible({ timeout: 5000 });
-    await page.getByRole("button", { name: "התחל", exact: true }).click();
-    const skipBtn = page.getByRole("button", { name: "דלג" });
-    if (await skipBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await skipBtn.click();
+    await openGame(page, "נכון או לא נכון", "easy", "התחל");
+    const skipBtnHe = page.getByRole("button", { name: "דלג" });
+    if (await skipBtnHe.isVisible({ timeout: 500 }).catch(() => false)) {
+      await skipBtnHe.click();
     }
 
     await page.waitForSelector("[data-is-true]", { timeout: 10_000 });

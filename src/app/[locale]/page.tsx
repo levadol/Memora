@@ -108,6 +108,31 @@ export default function HomePage() {
               {th("startTraining")}
             </GlassButton>
           )}
+          {isArithmeticPaused && (
+            <span className="text-sm text-[var(--color-text-secondary)]">
+              {th("arithmeticDailyProgress", {
+                current: arithmeticNextIndex + 1,
+                total: arithmeticDailyQueue!.length,
+              })}
+            </span>
+          )}
+          {isArithmeticPaused ? (
+            <GlassButton
+              variant="primary"
+              onClick={continueArithmetic}
+              aria-label={th("continueArithmeticTraining")}
+            >
+              {th("continueArithmeticTraining")}
+            </GlassButton>
+          ) : (
+            <GlassButton
+              variant="ghost"
+              onClick={startArithmeticTraining}
+              aria-label={th("startArithmeticTraining")}
+            >
+              {th("startArithmeticTraining")}
+            </GlassButton>
+          )}
         </div>
       </div>
 
@@ -132,6 +157,32 @@ export default function HomePage() {
               </div>
               <GlassButton variant="ghost" size="sm" onClick={dismissDailySummary}>
                 {th("dailyDone")}
+              </GlassButton>
+            </GlassCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {arithmeticDailySummary && (
+          <motion.div
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="mb-8"
+          >
+            <GlassCard className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-semibold text-[var(--color-correct)]">
+                  {th("arithmeticDailySummaryTitle")}
+                </p>
+                <p className="text-sm text-[var(--color-text-secondary)]">
+                  {th("arithmeticDailySummaryMessage", { total: arithmeticDailyQueue?.length ?? 3 })}
+                </p>
+              </div>
+              <GlassButton variant="ghost" size="sm" onClick={dismissArithmeticSummary}>
+                {th("arithmeticDailyDone")}
               </GlassButton>
             </GlassCard>
           </motion.div>
@@ -194,64 +245,9 @@ export default function HomePage() {
         })}
       </motion.div>
 
-      <div className="mt-10 mb-4 flex items-center justify-between gap-4 flex-wrap">
-        <h2 className="text-xl font-semibold text-[var(--color-text-secondary)]">
-          {th("arithmeticSection")}
-        </h2>
-        <div className="flex items-center gap-3 flex-wrap">
-          {isArithmeticPaused && (
-            <span className="text-sm text-[var(--color-text-secondary)]">
-              {th("arithmeticDailyProgress", {
-                current: arithmeticNextIndex + 1,
-                total: arithmeticDailyQueue!.length,
-              })}
-            </span>
-          )}
-          {isArithmeticPaused ? (
-            <GlassButton
-              variant="primary"
-              onClick={continueArithmetic}
-              aria-label={th("continueArithmeticTraining")}
-            >
-              {th("continueArithmeticTraining")}
-            </GlassButton>
-          ) : (
-            <GlassButton
-              variant="ghost"
-              onClick={startArithmeticTraining}
-              aria-label={th("startArithmeticTraining")}
-            >
-              {th("startArithmeticTraining")}
-            </GlassButton>
-          )}
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {arithmeticDailySummary && (
-          <motion.div
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="mb-8"
-          >
-            <GlassCard className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="font-semibold text-[var(--color-correct)]">
-                  {th("arithmeticDailySummaryTitle")}
-                </p>
-                <p className="text-sm text-[var(--color-text-secondary)]">
-                  {th("arithmeticDailySummaryMessage", { total: arithmeticDailyQueue?.length ?? 3 })}
-                </p>
-              </div>
-              <GlassButton variant="ghost" size="sm" onClick={dismissArithmeticSummary}>
-                {th("arithmeticDailyDone")}
-              </GlassButton>
-            </GlassCard>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <h2 className="mt-10 mb-4 text-xl font-semibold text-[var(--color-text-secondary)]">
+        {th("arithmeticSection")}
+      </h2>
 
       <motion.div
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"

@@ -26,6 +26,8 @@ npm run dev      # http://localhost:3000
 
 `NEXT_PUBLIC_E2E=1` renders `data-sequence`, `data-pattern`, and `data-pa-correct-word` attributes so tests can read the correct answer and submit it programmatically. The Playwright `webServer` config already sets this flag; never set it in a production build.
 
+> **E2E tests** must be run via `npx playwright test`, never against a manually-started dev server. The test runner starts its own server with `NEXT_PUBLIC_E2E=1`; running against a server without that flag disables all data attributes that drive E2E assertions.
+
 ## Architecture
 
 ```

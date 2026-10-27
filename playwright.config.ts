@@ -17,6 +17,6 @@ export default defineConfig({
   webServer: {
     command: "NEXT_PUBLIC_E2E=1 npm run dev",
     url: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   },
 });

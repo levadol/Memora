@@ -155,6 +155,12 @@ test.describe("Daily Training", () => {
         "default"
       );
     });
+    // __openGame sets difficulty: null — dismiss the DifficultyPicker if it appears
+    const pickerStart = page.getByRole("button", { name: "Start", exact: true });
+    if (await pickerStart.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await page.keyboard.press("2");
+      await pickerStart.click();
+    }
     await expect(page.getByText(/Round/i).first()).toBeVisible();
 
     // Quit corsi — since it's not game 0, progress should remain 0

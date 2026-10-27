@@ -1,15 +1,5 @@
 import { test, expect } from "@playwright/test";
-
-async function openChainGame(page: import("@playwright/test").Page) {
-  await page.getByText("Arithmetic Chain").click();
-  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible({ timeout: 5000 });
-  await page.getByRole("button", { name: "Start", exact: true }).click();
-  // Skip tutorial on first play
-  const skipBtn = page.getByRole("button", { name: "Skip" });
-  if (await skipBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await skipBtn.click();
-  }
-}
+import { openGame } from "./helpers";
 
 async function waitForAndEnterAnswer(page: import("@playwright/test").Page) {
   await page.waitForSelector("[data-answer]", { timeout: 10_000 });
@@ -32,14 +22,18 @@ test.describe("Arithmetic Chain game", () => {
   });
 
   test("clicking Arithmetic Chain opens game with round and max chain stats", async ({ page }) => {
-    await openChainGame(page);
+    await openGame(page, "Arithmetic Chain", "easy");
+    const skipBtn = page.getByRole("button", { name: "Skip" });
+    if (await skipBtn.isVisible({ timeout: 500 }).catch(() => false)) await skipBtn.click();
     await expect(page.getByText(/Round/i)).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/Max chain/i)).toBeVisible();
   });
 
   test("pause button opens pause menu with quit option", async ({ page }) => {
     test.setTimeout(20_000);
-    await openChainGame(page);
+    await openGame(page, "Arithmetic Chain", "easy");
+    const skipBtn = page.getByRole("button", { name: "Skip" });
+    if (await skipBtn.isVisible({ timeout: 500 }).catch(() => false)) await skipBtn.click();
     // Wait until the input phase so pause is meaningful
     await page.waitForSelector("[data-answer]", { timeout: 15_000 });
     await page.getByRole("button", { name: /pause/i }).click();
@@ -48,7 +42,9 @@ test.describe("Arithmetic Chain game", () => {
 
   test("quit from pause menu returns to home", async ({ page }) => {
     test.setTimeout(20_000);
-    await openChainGame(page);
+    await openGame(page, "Arithmetic Chain", "easy");
+    const skipBtn = page.getByRole("button", { name: "Skip" });
+    if (await skipBtn.isVisible({ timeout: 500 }).catch(() => false)) await skipBtn.click();
     await page.waitForSelector("[data-answer]", { timeout: 15_000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await page.getByRole("button", { name: /quit/i }).click();
@@ -57,14 +53,18 @@ test.describe("Arithmetic Chain game", () => {
 
   test("plays one correct round and asserts Correct!", async ({ page }) => {
     test.setTimeout(25_000);
-    await openChainGame(page);
+    await openGame(page, "Arithmetic Chain", "easy");
+    const skipBtn = page.getByRole("button", { name: "Skip" });
+    if (await skipBtn.isVisible({ timeout: 500 }).catch(() => false)) await skipBtn.click();
     await waitForAndEnterAnswer(page);
     await expect(page.getByText("Correct!")).toBeVisible({ timeout: 5000 });
   });
 
   test("plays one wrong round and asserts Incorrect!", async ({ page }) => {
     test.setTimeout(25_000);
-    await openChainGame(page);
+    await openGame(page, "Arithmetic Chain", "easy");
+    const skipBtn = page.getByRole("button", { name: "Skip" });
+    if (await skipBtn.isVisible({ timeout: 500 }).catch(() => false)) await skipBtn.click();
 
     await page.waitForSelector("[data-answer]", { timeout: 15_000 });
     const answer = await page.getAttribute("[data-answer]", "data-answer");
