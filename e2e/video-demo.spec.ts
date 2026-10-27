@@ -7,6 +7,7 @@
 import { test, expect } from "@playwright/test";
 import path from "path";
 import fs from "fs";
+import { openGame } from "./helpers";
 
 const DOCS_VIDEOS = path.join(process.cwd(), "docs", "videos");
 
@@ -28,7 +29,7 @@ async function saveVideo(page: import("@playwright/test").Page, name: string) {
 test("open and close a game from Home", async ({ page }) => {
   await page.goto("/en");
   await expect(page.getByText("Corsi Blocks")).toBeVisible();
-  await page.getByText("Corsi Blocks").click();
+  await openGame(page, "Corsi Blocks");
   await expect(page.getByRole("group", { name: "Corsi blocks" })).toBeVisible({ timeout: 8000 });
 
   await page.getByRole("button", { name: /pause/i }).click();
@@ -41,7 +42,7 @@ test("open and close a game from Home", async ({ page }) => {
 // ── 2. One correct + one incorrect round in Corsi ──────────────────────────
 test("correct and incorrect round", async ({ page }) => {
   await page.goto("/en");
-  await page.getByText("Corsi Blocks").click();
+  await openGame(page, "Corsi Blocks");
   await expect(page.getByRole("group", { name: "Corsi blocks" })).toBeVisible({ timeout: 8000 });
 
   // Correct round
@@ -67,7 +68,7 @@ test("results screen", async ({ page }) => {
   test.setTimeout(60000);
   await page.goto("/en");
   // Open N-Back position
-  await page.getByText("N-Back").click();
+  await openGame(page, "N-Back");
   // Wait for the game to appear (grid for position mode)
   await page.waitForSelector("[data-nback-phase]", { timeout: 10000 });
 
@@ -118,7 +119,7 @@ test("reduced motion on — open game, play round, close", async ({ page }) => {
   await page.goto("/en");
   await expect(page.getByText("Corsi Blocks")).toBeVisible();
 
-  await page.getByText("Corsi Blocks").click();
+  await openGame(page, "Corsi Blocks");
   await expect(page.getByRole("group", { name: "Corsi blocks" })).toBeVisible({ timeout: 8000 });
 
   await page.waitForSelector("[data-sequence]", { timeout: 12000 });

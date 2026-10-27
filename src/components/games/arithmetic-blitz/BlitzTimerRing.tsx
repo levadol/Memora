@@ -5,17 +5,18 @@ interface BlitzTimerRingProps {
   total: number;
   isUrgent: boolean;
   reducedMotion: boolean;
+  size?: number;
 }
 
-export function BlitzTimerRing({ timeRemaining, total, isUrgent }: BlitzTimerRingProps) {
-  const size = 160;
-  const strokeWidth = 8;
+export function BlitzTimerRing({ timeRemaining, total, isUrgent, size = 96 }: BlitzTimerRingProps) {
+  const strokeWidth = 6;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const fraction = total > 0 ? timeRemaining / total : 0;
   const dashoffset = circumference * (1 - fraction);
 
   const color = isUrgent ? "var(--color-incorrect)" : "var(--color-accent)";
+  const fontSize = size <= 96 ? "1.25rem" : "2.5rem";
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
@@ -49,8 +50,8 @@ export function BlitzTimerRing({ timeRemaining, total, isUrgent }: BlitzTimerRin
         />
       </svg>
       <span
-        className="ltr-nums relative z-10 text-4xl font-bold"
-        style={{ color }}
+        className="ltr-nums relative z-10 font-bold"
+        style={{ color, fontSize }}
         aria-live="polite"
         aria-label={`${timeRemaining} seconds remaining`}
       >

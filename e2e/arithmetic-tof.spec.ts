@@ -87,8 +87,7 @@ test.describe("Arithmetic True or False", () => {
 
     // In RTL (Hebrew): DOM order is [True]["לא נכון"] but visually mirrored to [False left][True right]
     // ArrowRight should press the visual-right button, which is True ("נכון")
-    // Focus the game area first so the keyboard handler is active
-    await page.locator("[data-is-true]").click();
+    // Keyboard handler is on window, no focus step needed
     await page.keyboard.press("ArrowRight");
 
     // Verify correct behaviour: if isTrue, ArrowRight pressed True → correct feedback
@@ -96,7 +95,7 @@ test.describe("Arithmetic True or False", () => {
     if (isTrue) {
       await expect(page.getByText("נכון!")).toBeVisible({ timeout: 3000 });
     } else {
-      await expect(page.getByText("לא נכון")).toBeVisible({ timeout: 3000 });
+      await expect(page.getByText("לא נכון", { exact: true })).toBeVisible({ timeout: 3000 });
     }
   });
 });

@@ -96,14 +96,15 @@ test.describe("Arithmetic Blitz game", () => {
     for (let i = 0; i < 5; i++) {
       await page.waitForSelector("[data-answer]", { timeout: 10_000 });
       const prevAnswer = await page.getAttribute("[data-answer]", "data-answer");
-      await page.keyboard.type(prevAnswer!);
-      // Wait for next problem (data-answer changes) or feedback before next loop
+      const prevAnswered = (await page.getAttribute("[data-answer]", "data-answered")) ?? String(i);
+      await page.keyboard.type(prevAnswer!, { delay: 100 });
+      // Wait for answered count to increment (reliable even when consecutive problems share an answer)
       await page.waitForFunction(
         (prev) => {
           const el = document.querySelector("[data-answer]");
-          return !el || el.getAttribute("data-answer") !== prev;
+          return !el || el.getAttribute("data-answered") !== prev;
         },
-        prevAnswer,
+        prevAnswered,
         { timeout: 5_000 }
       );
     }
@@ -112,7 +113,7 @@ test.describe("Arithmetic Blitz game", () => {
     await page.waitForSelector("[data-answer]", { timeout: 10_000 });
     const correctAnswer = await page.getAttribute("[data-answer]", "data-answer");
     const wrongAnswer = String(parseInt(correctAnswer!) + 1);
-    await page.keyboard.type(wrongAnswer);
+    await page.keyboard.type(wrongAnswer, { delay: 100 });
     // If wrong answer has same digit count as correct, it auto-submits.
     // Otherwise press Enter.
     if (wrongAnswer.length !== correctAnswer!.length) {

@@ -8,6 +8,7 @@ import { Header } from "@/components/layout/Header";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { GameOverlay } from "@/components/games/shared/GameOverlay";
 import { AchievementToast } from "@/components/ui/AchievementToast";
+import { PageBackground } from "@/components/layout/PageBackground";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -59,10 +60,12 @@ export default async function LocaleLayout({
           <StorageProvider>
             <StoreHydration />
             <BackgroundBlobs />
-            <Header />
-            <main className="relative z-10">
-              <PageTransition dir={isHebrew ? "rtl" : "ltr"}>{children}</PageTransition>
-            </main>
+            <PageBackground>
+              <Header />
+              <main className="relative z-10">
+                <PageTransition dir={isHebrew ? "rtl" : "ltr"}>{children}</PageTransition>
+              </main>
+            </PageBackground>
             <GameOverlay />
             <AchievementToast />
           </StorageProvider>

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openGame } from "./helpers";
 
 test.describe("N-Back game", () => {
   test.beforeEach(async ({ page }) => {
@@ -11,27 +12,27 @@ test.describe("N-Back game", () => {
   });
 
   test("clicking N-Back opens the game", async ({ page }) => {
-    await page.getByText("N-Back").click();
+    await openGame(page, "N-Back");
     // "Match" button is unique to N-Back game
     await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
   });
 
   test("game shows block counter, score and level", async ({ page }) => {
-    await page.getByText("N-Back").click();
+    await openGame(page, "N-Back");
     await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/Score/i)).toBeVisible();
     await expect(page.getByText(/\d-back/)).toBeVisible();
   });
 
   test("pause button opens pause menu with quit option", async ({ page }) => {
-    await page.getByText("N-Back").click();
+    await openGame(page, "N-Back");
     await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await expect(page.getByRole("button", { name: /quit/i })).toBeVisible();
   });
 
   test("quit from pause menu returns to home", async ({ page }) => {
-    await page.getByText("N-Back").click();
+    await openGame(page, "N-Back");
     await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await page.getByRole("button", { name: /quit/i }).click();
@@ -40,7 +41,7 @@ test.describe("N-Back game", () => {
 
   test("full block: auto-respond to all targets, expect 0 misses and 0 false alarms", async ({ page }) => {
     await page.goto("/en");
-    await page.getByText("N-Back").click();
+    await openGame(page, "N-Back");
 
     // Wait until stimulus phase begins and the sequence is available
     await page.waitForFunction(

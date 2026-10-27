@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { openGame } from "./helpers";
 
 const STATIC_SCREENS = [
   { path: "/en", name: "home-en" },
@@ -52,7 +53,7 @@ test.describe("Accessibility: axe scan — games (paused state)", () => {
     test(`${game.name} — paused game, axe clean`, async ({ page }) => {
       test.setTimeout(60_000);
       await page.goto("/en");
-      await page.getByText(game.text).click();
+      await openGame(page, game.text);
       // Skip tutorial if present (showTutorial may be false on repeat plays)
       await page.getByRole("button", { name: /skip|let's go/i }).first().click({ timeout: 2000 }).catch(() => {});
       // Wait for the pause button to be visible — confirms GameShell is mounted
@@ -82,7 +83,7 @@ test.describe("Accessibility: focus trap and keyboard navigation", () => {
   test("pause menu traps focus and Escape closes it", async ({ page }) => {
     test.setTimeout(60_000);
     await page.goto("/en");
-    await page.getByText("Corsi Blocks").click();
+    await openGame(page, "Corsi Blocks");
     await page.getByRole("button", { name: /skip|let's go/i }).first().click({ timeout: 2000 }).catch(() => {});
     // Wait for the game board (GameShell mounted and board rendered)
     await expect(page.getByRole("button", { name: /pause/i })).toBeVisible({ timeout: 10_000 });
@@ -143,7 +144,7 @@ test.describe("Accessibility: focus trap and keyboard navigation", () => {
       } catch {}
     });
     await page.goto("/en");
-    await page.locator("article").filter({ hasText: /corsi/i }).first().click();
+    await openGame(page, "Corsi Blocks");
     await page.waitForTimeout(400);
 
     const dialog = page.locator('[role="dialog"]').first();

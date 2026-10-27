@@ -14,6 +14,7 @@ interface StatItem {
 
 interface GameShellProps {
   stats: StatItem[];
+  statsExtra?: ReactNode;
   phaseLabel: string;
   feedbackCorrect: boolean | null;
   isPaused: boolean;
@@ -28,6 +29,7 @@ interface GameShellProps {
 
 export function GameShell({
   stats,
+  statsExtra,
   phaseLabel,
   feedbackCorrect,
   isPaused,
@@ -52,18 +54,21 @@ export function GameShell({
     <div className="flex min-h-screen flex-col" {...spreadable}>
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4">
-        <div className="flex gap-6">
-          {stats.map(({ label, value }) => (
-            <span
-              key={label}
-              className="text-sm text-[var(--color-text-secondary)]"
-            >
-              {label}{" "}
-              <span className="ltr-nums font-bold text-[var(--color-text-primary)]">
-                {value}
+        <div className="flex items-center gap-4">
+          <div className="flex gap-6">
+            {stats.map(({ label, value }) => (
+              <span
+                key={label}
+                className="text-sm text-[var(--color-text-secondary)]"
+              >
+                {label}{" "}
+                <span className="ltr-nums font-bold text-[var(--color-text-primary)]">
+                  {value}
+                </span>
               </span>
-            </span>
-          ))}
+            ))}
+          </div>
+          {statsExtra}
         </div>
         <GlassButton
           variant="ghost"

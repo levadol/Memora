@@ -289,11 +289,18 @@ export function ArithmeticChainGame({ mode }: ArithmeticChainGameProps) {
         {state.phase === "input" && state.currentProblem && (
           <div className="flex flex-col items-center gap-4">
             <div
-              className="ltr-nums min-h-[3rem] rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-surface)] px-6 py-3 text-center text-3xl font-bold text-[var(--color-accent)]"
+              className="ltr-nums flex items-center justify-end rounded-xl border-2 border-[var(--color-glass-border)] bg-[var(--color-surface)] px-6 font-bold text-[var(--color-accent)]"
+              style={{
+                width: "min(calc(100% - 32px), 440px)",
+                height: "72px",
+                fontSize: "40px",
+                direction: "ltr",
+                margin: "0 auto",
+              }}
               aria-label={t("game.chainInputPhase")}
               aria-live="polite"
             >
-              {state.typedInput || " "}
+              {state.typedInput || "_"}
             </div>
             <NumericKeypad
               onDigit={handleChar}

@@ -324,6 +324,15 @@ export function ArithmeticBlitzGame({ mode }: ArithmeticBlitzGameProps) {
         { label: t("game.blitzScore"), value: state.correctCount },
         { label: t("game.blitzTimer"), value: state.timeRemainingSeconds },
       ]}
+      statsExtra={
+        <BlitzTimerRing
+          timeRemaining={state.timeRemainingSeconds}
+          total={state.sessionDurationSeconds}
+          isUrgent={isUrgent}
+          reducedMotion={reducedMotion}
+          size={96}
+        />
+      }
       phaseLabel={phaseLabel}
       feedbackCorrect={state.phase === "playing" ? state.lastFeedbackCorrect : null}
       isPaused={state.phase === "paused"}
@@ -333,22 +342,19 @@ export function ArithmeticBlitzGame({ mode }: ArithmeticBlitzGameProps) {
       onQuit={closeGame}
       dataAttributes={
         isE2E && state.phase === "playing" && state.currentProblem
-          ? { "data-answer": String(state.currentProblem.answer) }
+          ? {
+              "data-answer": String(state.currentProblem.answer),
+              "data-answered": String(state.correctCount + state.incorrectCount),
+            }
           : undefined
       }
     >
-      <div className="flex flex-col items-center gap-6">
-        <BlitzTimerRing
-          timeRemaining={state.timeRemainingSeconds}
-          total={state.sessionDurationSeconds}
-          isUrgent={isUrgent}
-          reducedMotion={reducedMotion}
-        />
-
-        {state.currentProblem && state.phase === "playing" && (
+      {state.currentProblem && state.phase === "playing" && (
+        <div className="blitz-layout flex w-full flex-col items-center gap-6 px-4">
+          {/* Left column (or top on mobile): problem + answer */}
           <div className="flex flex-col items-center gap-4">
             <div
-              className="ltr-nums text-4xl font-bold text-[var(--color-text-primary)]"
+              className="problem-text ltr-nums font-bold text-[var(--color-text-primary)]"
               aria-live="polite"
               aria-atomic="true"
             >
@@ -356,28 +362,36 @@ export function ArithmeticBlitzGame({ mode }: ArithmeticBlitzGameProps) {
             </div>
 
             <div
-              className="ltr-nums min-h-[3rem] rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-surface)] px-6 py-3 text-center text-3xl font-bold text-[var(--color-accent)]"
+              className="ltr-nums flex items-center justify-end rounded-xl border-2 border-[var(--color-glass-border)] bg-[var(--color-surface)] px-6 font-bold text-[var(--color-accent)]"
+              style={{
+                width: "min(calc(100% - 32px), 440px)",
+                height: "72px",
+                fontSize: "40px",
+                direction: "ltr",
+                margin: "0 auto",
+              }}
               aria-label="Your answer"
               aria-live="polite"
             >
-              {state.typedInput || " "}
+              {state.typedInput || "_"}
             </div>
-
-            <NumericKeypad
-              onDigit={handleChar}
-              onBackspace={handleBackspace}
-              onSubmit={handleEnter}
-              showMinus={showMinus}
-            />
           </div>
-        )}
 
-        {state.phase === "ready" && (
-          <div className="text-lg text-[var(--color-text-secondary)]">
-            {t("game.getReady")}
-          </div>
-        )}
-      </div>
+          {/* Right column (or bottom on mobile): keypad */}
+          <NumericKeypad
+            onDigit={handleChar}
+            onBackspace={handleBackspace}
+            onSubmit={handleEnter}
+            showMinus={showMinus}
+          />
+        </div>
+      )}
+
+      {state.phase === "ready" && (
+        <div className="text-lg text-[var(--color-text-secondary)]">
+          {t("game.getReady")}
+        </div>
+      )}
     </GameShell>
   );
 }

@@ -186,6 +186,46 @@ body {
   outline-offset: 2px;
 }
 
+/* ─── Numeric keypad ─────────────────────────────────────────────────── */
+.numeric-keypad-key {
+  min-height: 64px;
+}
+@media (min-width: 600px), (min-height: 700px) {
+  .numeric-keypad-key {
+    min-height: 72px;
+  }
+}
+@media (max-height: 700px) {
+  .numeric-keypad-sticky {
+    position: sticky;
+    bottom: 0;
+    padding-bottom: 12px;
+  }
+}
+
+/* ─── Arithmetic problem text ────────────────────────────────────────── */
+.problem-text {
+  font-size: 44px;
+  word-spacing: 0.05em;
+}
+@media (min-width: 600px) {
+  .problem-text {
+    font-size: 56px;
+  }
+}
+
+/* ─── Blitz two-column desktop layout ───────────────────────────────── */
+@media (min-width: 900px) {
+  .blitz-layout {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    gap: 32px;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+  }
+}
+
 /* True/False timer bar */
 @keyframes tof-timer-shrink {
   from { transform: scaleX(1); background: var(--color-accent); }

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openGame } from "./helpers";
 
 test.describe("Paired Associates game", () => {
   test.beforeEach(async ({ page }) => {
@@ -11,7 +12,7 @@ test.describe("Paired Associates game", () => {
   });
 
   test("clicking Paired Associates opens the game", async ({ page }) => {
-    await page.getByText("Paired Associates").click();
+    await openGame(page, "Paired Associates");
     await page.waitForFunction(
       () => document.querySelector("[data-pa-phase]") !== null,
       { timeout: 8000 }
@@ -20,7 +21,7 @@ test.describe("Paired Associates game", () => {
   });
 
   test("study phase shows phase label", async ({ page }) => {
-    await page.getByText("Paired Associates").click();
+    await openGame(page, "Paired Associates");
     await page.waitForFunction(
       () => document.querySelector("[data-pa-phase=\"study\"]") !== null,
       { timeout: 8000 }
@@ -30,7 +31,7 @@ test.describe("Paired Associates game", () => {
   });
 
   test("pause button opens pause menu with quit option", async ({ page }) => {
-    await page.getByText("Paired Associates").click();
+    await openGame(page, "Paired Associates");
     await page.waitForFunction(
       () => document.querySelector("[data-pa-phase]") !== null,
       { timeout: 8000 }
@@ -40,7 +41,7 @@ test.describe("Paired Associates game", () => {
   });
 
   test("quit from pause menu returns to home", async ({ page }) => {
-    await page.getByText("Paired Associates").click();
+    await openGame(page, "Paired Associates");
     await page.waitForFunction(
       () => document.querySelector("[data-pa-phase]") !== null,
       { timeout: 8000 }
@@ -52,7 +53,7 @@ test.describe("Paired Associates game", () => {
 
   test("full round: auto-answer all questions correctly using data-pa-correct-word", async ({ page }) => {
     await page.goto("/en");
-    await page.getByText("Paired Associates").click();
+    await openGame(page, "Paired Associates");
 
     // Wait for study phase
     await page.waitForFunction(

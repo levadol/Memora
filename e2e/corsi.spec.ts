@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openGame } from "./helpers";
 
 test.describe("Corsi Blocks game", () => {
   test.beforeEach(async ({ page }) => {
@@ -11,18 +12,18 @@ test.describe("Corsi Blocks game", () => {
   });
 
   test("clicking Corsi Blocks opens the game overlay", async ({ page }) => {
-    await page.getByText("Corsi Blocks").click();
+    await openGame(page, "Corsi Blocks");
     await expect(page.getByRole("group", { name: "Corsi blocks" })).toBeVisible();
   });
 
   test("game shows round counter and score", async ({ page }) => {
-    await page.getByText("Corsi Blocks").click();
+    await openGame(page, "Corsi Blocks");
     await expect(page.getByText(/Round/i)).toBeVisible();
     await expect(page.getByText(/Score/i)).toBeVisible();
   });
 
   test("pause button opens pause menu with quit option", async ({ page }) => {
-    await page.getByText("Corsi Blocks").click();
+    await openGame(page, "Corsi Blocks");
     // Wait for the board to appear — PAUSE now works from "ready" onwards
     await expect(page.getByRole("group", { name: "Corsi blocks" })).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
@@ -30,7 +31,7 @@ test.describe("Corsi Blocks game", () => {
   });
 
   test("quit from pause menu returns to home", async ({ page }) => {
-    await page.getByText("Corsi Blocks").click();
+    await openGame(page, "Corsi Blocks");
     await expect(page.getByRole("group", { name: "Corsi blocks" })).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await page.getByRole("button", { name: /quit/i }).click();
@@ -38,7 +39,7 @@ test.describe("Corsi Blocks game", () => {
   });
 
   test("plays one full round to feedback, then round counter advances", async ({ page }) => {
-    await page.getByText("Corsi Blocks").click();
+    await openGame(page, "Corsi Blocks");
 
     // Wait until input phase — data-sequence is set on the game root (requires NEXT_PUBLIC_E2E=1)
     await page.waitForSelector("[data-sequence]", { timeout: 12000 });
