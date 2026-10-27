@@ -25,6 +25,7 @@ import { GameShell } from "@/components/games/shared/GameShell";
 import { TofEquation } from "./TofEquation";
 import { TofButtons } from "./TofButtons";
 import { TofTimerBar } from "./TofTimerBar";
+import { FeedbackDisplay } from "@/components/games/shared/FeedbackDisplay";
 import { soundSystem } from "@/lib/audio/webAudio";
 import { useAppStore } from "@/lib/store";
 import type { TofState } from "@/lib/games/arithmetic-tof/types";
@@ -253,40 +254,67 @@ export function ArithmeticTofGame({ mode }: ArithmeticTofGameProps) {
     }
   })();
 
+  const inlineFeedbackCorrect =
+    state.phase === "feedback" ? state.lastFeedbackCorrect : null;
+
   return (
     <GameShell
       stats={[
-        {
-          label: t("game.tofItem"),
-          value: `${state.currentIndex + 1}/${TOTAL_ITEMS}`,
-        },
         {
           label: t("game.tofScore"),
           value: `${Math.round(accuracy * 100)}%`,
         },
       ]}
       phaseLabel={phaseLabel}
-      feedbackCorrect={state.phase === "feedback" ? state.lastFeedbackCorrect : null}
+      feedbackCorrect={inlineFeedbackCorrect}
+      feedbackPlacement="inline"
       isPaused={state.phase === "paused"}
       onPause={() => dispatch({ type: "PAUSE" })}
       onResume={handleResume}
       onRestart={handlePlayAgain}
       onQuit={closeGame}
     >
-      <div className="flex flex-col items-center gap-6 px-4">
-        {state.phase === "showing" && currentItem && (
+      <div className="flex flex-col items-center gap-4 px-4">
+        {(state.phase === "showing" || state.phase === "feedback") && currentItem && (
           <>
-            <TofTimerBar key={state.currentIndex} durationMs={timeLimitMs} />
+            {/* Per-item countdown + "12 / 30" progress */}
+            <TofTimerBar
+              key={state.currentIndex}
+              durationMs={timeLimitMs}
+              currentIndex={state.currentIndex}
+              totalItems={TOTAL_ITEMS}
+            />
+
+            {/* Equation card — border tints green/red during feedback */}
             <TofEquation
               text={currentItem.text}
               isTrue={currentItem.isTrue}
-              showDataAttr={isE2E}
+              showDataAttr={isE2E && state.phase === "showing"}
+              feedbackCorrect={inlineFeedbackCorrect}
             />
-            <TofButtons onAnswer={handleAnswer} disabled={false} />
+
+            {/* Fixed-height inline feedback slot so buttons don't jump */}
+            <div
+              className="flex items-center justify-center"
+              style={{ height: "48px" }}
+              aria-live="assertive"
+              aria-atomic="true"
+            >
+              <FeedbackDisplay feedbackCorrect={inlineFeedbackCorrect} />
+            </div>
+
+            {/* True / False buttons */}
+            <TofButtons
+              onAnswer={handleAnswer}
+              disabled={state.phase === "feedback"}
+            />
           </>
         )}
         {state.phase === "ready" && currentItem && (
-          <div className="ltr-nums flex min-h-[4rem] items-center justify-center rounded-2xl border border-[var(--color-glass-border)] bg-[var(--color-surface)] px-8 py-4 text-3xl font-bold text-[var(--color-text-secondary)]">
+          <div
+            className="ltr-nums flex min-h-[4rem] items-center justify-center rounded-2xl border border-[var(--color-glass-border)] bg-[var(--color-surface)] px-8 py-4 text-3xl font-bold text-[var(--color-text-secondary)]"
+            style={{ width: "min(calc(100% - 32px), 440px)" }}
+          >
             {currentItem.text}
           </div>
         )}

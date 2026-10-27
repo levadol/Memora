@@ -165,7 +165,13 @@
         "step2Title": "Press Match",
         "step2Body": "Tap Match (or press Space / M) when the current stimulus matches the one N steps ago. If it does not match, do nothing.",
         "step3Title": "The level adjusts",
-        "step3Body": "If you respond accurately the N-Back level increases. If you struggle it decreases. Stay near your limit."
+        "step3Body": "If you respond accurately the N-Back level increases. If you struggle it decreases. Stay near your limit.",
+        "demoTitle": "Watch this 1-back demo",
+        "demoPrime": "Watch and remember",
+        "demoSame": "Same position as the previous — press Match!",
+        "demoDiff": "Different — do nothing",
+        "demoEnd": "In {n}-back, compare with the stimulus {n} steps back.",
+        "demoPlay": "Start playing"
       }
     },
     "patternMatrix": {
@@ -260,11 +266,18 @@
     "enteredDigits": "Entered digits",
     "digitPad": "Digit pad",
     "nBackMatch": "Match",
+    "nBackMatchN": "Same as {n} back",
     "nBackBlock": "Block",
     "nBackSuffix": "back",
     "nBackWatchPosition": "Watch the position",
     "nBackWatchLetter": "Watch the letter",
     "nBackLetter": "Letter",
+    "nBackRulePosition": "Press when the position matches {n} steps back.",
+    "nBackRuleLetter": "Press when the letter matches {n} steps back.",
+    "nBackStimulusOf": "Stimulus {current} / {total}",
+    "nBackPriming": "Get ready…",
+    "nBackShortSession": "Short session",
+    "nBackShortSessionDesc": "{blocks} blocks × {trials} trials",
     "paStudy": "Study the pairs",
     "paTest": "Which word goes here?",
     "paPair": "Pair {index} of {total}",

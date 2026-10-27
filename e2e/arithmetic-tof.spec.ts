@@ -92,10 +92,12 @@ test.describe("Arithmetic True or False", () => {
 
     // Verify correct behaviour: if isTrue, ArrowRight pressed True → correct feedback
     // if !isTrue, ArrowRight pressed True → incorrect feedback (false alarm)
+    // Scope to the assertive live region so the False button text doesn't conflict
+    const feedbackRegion = page.locator('[aria-live="assertive"]');
     if (isTrue) {
-      await expect(page.getByText("נכון!")).toBeVisible({ timeout: 3000 });
+      await expect(feedbackRegion.getByText("נכון!")).toBeVisible({ timeout: 3000 });
     } else {
-      await expect(page.getByText("לא נכון", { exact: true })).toBeVisible({ timeout: 3000 });
+      await expect(feedbackRegion.getByText("לא נכון")).toBeVisible({ timeout: 3000 });
     }
   });
 });

@@ -1,6 +1,8 @@
 export const TRIALS_PER_BLOCK = 20;
+export const TRIALS_PER_BLOCK_SHORT = 15;
 export const TARGET_RATE = 0.3;
 export const TOTAL_BLOCKS = 3;
+export const TOTAL_BLOCKS_SHORT = 2;
 export const MIN_N = 1;
 export const MAX_N = 3;
 export const STIMULUS_ON_MS = 2000;

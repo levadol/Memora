@@ -165,7 +165,13 @@
         "step2Title": "לחצו 'התאמה'",
         "step2Body": "לחצו 'התאמה' (או רווח / M) כאשר הגירוי הנוכחי תואם לזה שהיה N צעדים קודם. אם לא — אל תעשו דבר.",
         "step3Title": "הרמה מתאימה עצמה",
-        "step3Body": "בדיוק גבוה רמת N עולה. בקשיים — רמת N יורדת. הישארו ליד הגבול שלכם."
+        "step3Body": "בדיוק גבוה רמת N עולה. בקשיים — רמת N יורדת. הישארו ליד הגבול שלכם.",
+        "demoTitle": "צפו בהדגמה של 1-אחורה",
+        "demoPrime": "זכרו את המיקום",
+        "demoSame": "אותו מיקום כמו הקודם — לחצו התאמה!",
+        "demoDiff": "שונה — אל תלחצו",
+        "demoEnd": "ב-{n}-אחורה, השוו לגירוי {n} צעדים אחורה.",
+        "demoPlay": "התחל לשחק"
       }
     },
     "patternMatrix": {
@@ -260,11 +266,18 @@
     "enteredDigits": "ספרות שהוקשו",
     "digitPad": "לוח ספרות",
     "nBackMatch": "התאמה",
+    "nBackMatchN": "זהה ל-{n} אחורה",
     "nBackBlock": "בלוק",
     "nBackSuffix": "אחורה",
     "nBackWatchPosition": "צפו במיקום",
     "nBackWatchLetter": "צפו באות",
     "nBackLetter": "אות",
+    "nBackRulePosition": "לחצו כאשר המיקום תואם {n} צעדים אחורה.",
+    "nBackRuleLetter": "לחצו כאשר האות תואמת {n} צעדים אחורה.",
+    "nBackStimulusOf": "גירוי {current} / {total}",
+    "nBackPriming": "היכונו…",
+    "nBackShortSession": "סשן קצר",
+    "nBackShortSessionDesc": "{blocks} בלוקים × {trials} ניסיונות",
     "paStudy": "למדו את הזוגות",
     "paTest": "איזו מילה שייכת לכאן?",
     "paPair": "זוג {index} מתוך {total}",

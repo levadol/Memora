@@ -23,6 +23,7 @@ import { ResultScreen } from "@/components/games/shared/ResultScreen";
 import { GameShell } from "@/components/games/shared/GameShell";
 import { NumericKeypad } from "@/components/games/arithmetic-blitz/NumericKeypad";
 import { ChainDisplay } from "./ChainDisplay";
+import { FeedbackDisplay } from "@/components/games/shared/FeedbackDisplay";
 import { soundSystem } from "@/lib/audio/webAudio";
 import { useAppStore } from "@/lib/store";
 import type { ChainState } from "@/lib/games/arithmetic-chain/types";
@@ -266,6 +267,7 @@ export function ArithmeticChainGame({ mode }: ArithmeticChainGameProps) {
       ]}
       phaseLabel={phaseLabel}
       feedbackCorrect={state.phase === "feedback" ? state.lastFeedbackCorrect : null}
+      feedbackPlacement="inline"
       isPaused={state.phase === "paused"}
       onPause={() => dispatch({ type: "PAUSE" })}
       onResume={handleResume}
@@ -309,6 +311,18 @@ export function ArithmeticChainGame({ mode }: ArithmeticChainGameProps) {
               showMinus={false}
               disabled={!reducedMotion && state.phase !== "input"}
             />
+          </div>
+        )}
+
+        {/* Inline feedback under the keypad for feedback phase */}
+        {state.phase === "feedback" && (
+          <div
+            className="flex items-center justify-center"
+            style={{ height: "48px" }}
+            aria-live="assertive"
+            aria-atomic="true"
+          >
+            <FeedbackDisplay feedbackCorrect={state.lastFeedbackCorrect} />
           </div>
         )}
       </div>

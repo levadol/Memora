@@ -46,6 +46,7 @@ export interface NBackState {
   lastFeedbackCorrect: boolean | null;
   difficulty: Difficulty;
   showTutorial: boolean;
+  shortSession?: boolean;
 }
 
 export type NBackAction =
@@ -55,6 +56,7 @@ export type NBackAction =
       mode: NBackMode;
       difficulty: Difficulty;
       showTutorial: boolean;
+      shortSession?: boolean;
     }
   | { type: "TUTORIAL_SKIP" }
   | { type: "READY_COMPLETE"; sequence: NBackTrial[]; now: number }
@@ -71,5 +73,6 @@ export type NBackAction =
       mode: NBackMode;
       difficulty: Difficulty;
       showTutorial: boolean;
+      shortSession?: boolean;
     }
   | { type: "QUIT" };

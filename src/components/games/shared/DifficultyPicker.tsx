@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { useAppStore } from "@/lib/store";
 import type { Difficulty, GameId } from "@/lib/storage/types";
+import { TOTAL_BLOCKS_SHORT, TRIALS_PER_BLOCK_SHORT } from "@/lib/games/n-back/constants";
 
 interface DifficultyPickerProps {
   gameId: GameId;
@@ -37,8 +38,11 @@ export function DifficultyPicker({ gameId }: DifficultyPickerProps) {
   const t = useTranslations();
   const settings = useAppStore((s) => s.settings);
   const setGameDifficulty = useAppStore((s) => s.setGameDifficulty);
+  const setNBackShortSession = useAppStore((s) => s.setNBackShortSession);
   const closeGame = useAppStore((s) => s.closeGame);
   const [selected, setSelected] = useState<Difficulty>(settings.defaultDifficulty);
+  const [shortSession, setShortSession] = useState(false);
+  const isNBack = gameId === "n-back";
 
   const gameKey = GAME_TRANSLATION_MAP[gameId];
 
@@ -47,12 +51,12 @@ export function DifficultyPicker({ gameId }: DifficultyPickerProps) {
       if (e.key === "1") setSelected("easy");
       else if (e.key === "2") setSelected("medium");
       else if (e.key === "3") setSelected("hard");
-      else if (e.key === "Enter") setGameDifficulty(selected);
+      else if (e.key === "Enter") { if (isNBack) setNBackShortSession(shortSession); setGameDifficulty(selected); }
       else if (e.key === "Escape") closeGame();
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [selected, setGameDifficulty, closeGame]);
+  }, [selected, shortSession, isNBack, setGameDifficulty, setNBackShortSession, closeGame]);
 
   function getDesc(difficulty: Difficulty): string {
     // Each game key and difficulty is statically known — translated in messages files
@@ -148,11 +152,28 @@ export function DifficultyPicker({ gameId }: DifficultyPickerProps) {
 
       <p className="text-xs text-[var(--color-text-secondary)]">{t("difficultyPicker.keyHint")}</p>
 
+      {isNBack && (
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-surface)] px-5 py-3 text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent)]/50">
+          <input
+            type="checkbox"
+            checked={shortSession}
+            onChange={(e) => setShortSession(e.target.checked)}
+            className="h-4 w-4 accent-[var(--color-accent)]"
+          />
+          <div>
+            <div className="font-semibold">{t("game.nBackShortSession")}</div>
+            <div className="text-sm opacity-70">
+              {t("game.nBackShortSessionDesc", { blocks: TOTAL_BLOCKS_SHORT, trials: TRIALS_PER_BLOCK_SHORT })}
+            </div>
+          </div>
+        </label>
+      )}
+
       <div className="flex gap-3">
         <GlassButton variant="ghost" onClick={closeGame}>
           {t("game.quit")}
         </GlassButton>
-        <GlassButton variant="primary" onClick={() => setGameDifficulty(selected)}>
+        <GlassButton variant="primary" onClick={() => { if (isNBack) setNBackShortSession(shortSession); setGameDifficulty(selected); }}>
           {t("difficultyPicker.start")}
         </GlassButton>
       </div>

@@ -8,6 +8,7 @@ export type ActiveGame = {
   gameId: GameId;
   mode: string;
   difficulty: Difficulty | null; // null = show difficulty picker before game
+  shortSession?: boolean;
 } | null;
 
 const DAILY_GAMES: GameId[] = [
@@ -43,6 +44,7 @@ interface AppState {
   setRoundInProgress: (v: boolean) => void;
   setAchievementToast: (id: string | null) => void;
   setGameDifficulty: (d: Difficulty) => void;
+  setNBackShortSession: (v: boolean) => void;
   startDailyTraining: () => void;
   markDailyGameComplete: (gameId: GameId) => void;
   continueDaily: () => void;
@@ -76,6 +78,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
   setGameDifficulty: (d) =>
     set((state) =>
       state.activeGame ? { activeGame: { ...state.activeGame, difficulty: d } } : {}
+    ),
+  setNBackShortSession: (v) =>
+    set((state) =>
+      state.activeGame ? { activeGame: { ...state.activeGame, shortSession: v } } : {}
     ),
   startDailyTraining: () => {
     const defaultDifficulty = get().settings.defaultDifficulty;

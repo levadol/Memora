@@ -25,6 +25,7 @@ import { ResultScreen } from "@/components/games/shared/ResultScreen";
 import { GameShell } from "@/components/games/shared/GameShell";
 import { NumericKeypad } from "./NumericKeypad";
 import { BlitzTimerRing } from "./BlitzTimerRing";
+import { FeedbackDisplay } from "@/components/games/shared/FeedbackDisplay";
 import { soundSystem } from "@/lib/audio/webAudio";
 import { useAppStore } from "@/lib/store";
 import type { BlitzState } from "@/lib/games/arithmetic-blitz/types";
@@ -335,6 +336,7 @@ export function ArithmeticBlitzGame({ mode }: ArithmeticBlitzGameProps) {
       }
       phaseLabel={phaseLabel}
       feedbackCorrect={state.phase === "playing" ? state.lastFeedbackCorrect : null}
+      feedbackPlacement="inline"
       isPaused={state.phase === "paused"}
       onPause={() => dispatch({ type: "PAUSE" })}
       onResume={handleResume}
@@ -374,6 +376,16 @@ export function ArithmeticBlitzGame({ mode }: ArithmeticBlitzGameProps) {
               aria-live="polite"
             >
               {state.typedInput || "_"}
+            </div>
+
+            {/* Inline feedback under the answer field */}
+            <div
+              className="flex items-center justify-center"
+              style={{ height: "48px" }}
+              aria-live="assertive"
+              aria-atomic="true"
+            >
+              <FeedbackDisplay feedbackCorrect={state.lastFeedbackCorrect} />
             </div>
           </div>
 

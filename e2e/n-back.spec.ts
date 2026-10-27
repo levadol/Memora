@@ -13,27 +13,27 @@ test.describe("N-Back game", () => {
 
   test("clicking N-Back opens the game", async ({ page }) => {
     await openGame(page, "N-Back");
-    // "Match" button is unique to N-Back game
-    await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
+    // "Same as N back" button is unique to N-Back game
+    await expect(page.getByRole("button", { name: /Same as \d+ back/i })).toBeVisible({ timeout: 5000 });
   });
 
   test("game shows block counter, score and level", async ({ page }) => {
     await openGame(page, "N-Back");
-    await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole("button", { name: /Same as \d+ back/i })).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/Score/i)).toBeVisible();
     await expect(page.getByText(/\d-back/)).toBeVisible();
   });
 
   test("pause button opens pause menu with quit option", async ({ page }) => {
     await openGame(page, "N-Back");
-    await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole("button", { name: /Same as \d+ back/i })).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await expect(page.getByRole("button", { name: /quit/i })).toBeVisible();
   });
 
   test("quit from pause menu returns to home", async ({ page }) => {
     await openGame(page, "N-Back");
-    await expect(page.getByRole("button", { name: /Match/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole("button", { name: /Same as \d+ back/i })).toBeVisible({ timeout: 5000 });
     await page.getByRole("button", { name: /pause/i }).click();
     await page.getByRole("button", { name: /quit/i }).click();
     await expect(page.getByRole("heading", { name: "Daily Training" })).toBeVisible();
@@ -71,7 +71,7 @@ test.describe("N-Back game", () => {
           if (idxAttr === null) return;
           const idx = Number(idxAttr);
           if (idx >= n && sequence[idx]?.isTarget) {
-            const btn = document.querySelector("button[aria-label=\"Match\"]") as HTMLButtonElement | null;
+            const btn = document.querySelector("button[aria-label*=\"back\"]") as HTMLButtonElement | null;
             if (btn && !btn.disabled) btn.click();
           }
         });

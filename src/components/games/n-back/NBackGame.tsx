@@ -1,15 +1,15 @@
 "use client";
 
-import { useReducer, useEffect, useRef, useCallback } from "react";
+import { useReducer, useEffect, useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { nBackReducer, generateNBackSequence } from "@/lib/games/n-back/logic";
-import { N_BACK_TUTORIAL_STEPS } from "@/lib/games/n-back/tutorial";
 import { createNBackScheduler } from "@/lib/scheduler/n-back";
 import { realClock } from "@/lib/scheduler/realClock";
 import type { NBackMode } from "@/lib/games/n-back/types";
 import {
   TRIALS_PER_BLOCK,
+  TRIALS_PER_BLOCK_SHORT,
   TARGET_RATE,
   FEEDBACK_DURATION_MS,
   READY_DURATION_MS,
@@ -20,7 +20,8 @@ import { useSessionResult } from "@/lib/hooks/useSessionResult";
 import { useGamePhase } from "@/lib/hooks/useGamePhase";
 import { GameShell } from "@/components/games/shared/GameShell";
 import { NBackGrid } from "./NBackGrid";
-import { TutorialOverlay } from "@/components/games/shared/TutorialOverlay";
+import type { TrialFeedbackType } from "./NBackGrid";
+import { NBackInteractiveTutorial } from "./NBackInteractiveTutorial";
 import { ResultScreen } from "@/components/games/shared/ResultScreen";
 import { soundSystem } from "@/lib/audio/webAudio";
 import { useAppStore } from "@/lib/store";
@@ -41,8 +42,11 @@ export function NBackGame({ mode }: NBackGameProps) {
   const appSettings = useAppStore((s) => s.settings);
   const activeGame = useAppStore((s) => s.activeGame);
   const DEFAULT_DIFFICULTY = activeGame?.difficulty ?? appSettings.defaultDifficulty;
+  const shortSession = activeGame?.shortSession ?? false;
   const gameMode = deriveMode(mode);
   const initialN = STARTING_N[DEFAULT_DIFFICULTY] ?? 2;
+
+  const trialsPerBlock = shortSession ? TRIALS_PER_BLOCK_SHORT : TRIALS_PER_BLOCK;
 
   const [state, dispatch] = useReducer(nBackReducer, {
     phase: "idle" as const,
@@ -64,6 +68,7 @@ export function NBackGame({ mode }: NBackGameProps) {
     lastFeedbackCorrect: null,
     difficulty: DEFAULT_DIFFICULTY,
     showTutorial: false,
+    shortSession,
   });
 
   const schedulerRef = useRef(
@@ -105,7 +110,7 @@ export function NBackGame({ mode }: NBackGameProps) {
     activePhases: ["stimulus"],
     readyDelayMs: READY_DURATION_MS,
     onReadyElapsed: () => {
-      const totalTrials = TRIALS_PER_BLOCK + state.n;
+      const totalTrials = trialsPerBlock + state.n;
       const seq = generateNBackSequence(state.n, totalTrials, TARGET_RATE, alphabet, Math.random);
       dispatch({ type: "READY_COMPLETE", sequence: seq, now: performance.now() });
     },
@@ -115,7 +120,14 @@ export function NBackGame({ mode }: NBackGameProps) {
 
   useEffect(() => {
     soundSystem.unlock();
-    dispatch({ type: "START", n: initialN, mode: gameMode, difficulty: DEFAULT_DIFFICULTY, showTutorial: false });
+    dispatch({
+      type: "START",
+      n: initialN,
+      mode: gameMode,
+      difficulty: DEFAULT_DIFFICULTY,
+      showTutorial: false,
+      shortSession,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -153,10 +165,51 @@ export function NBackGame({ mode }: NBackGameProps) {
     dispatch({ type: "RESPOND" });
   }, [state.phase]);
 
+  // Per-trial feedback for hits, false alarms, and misses
+  const [trialFeedback, setTrialFeedback] = useState<{
+    cell: number;
+    type: TrialFeedbackType;
+  } | null>(null);
+
+  const prevIndexRef = useRef(-1);
+  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Detect new response (hit or false alarm)
+  useEffect(() => {
+    if (state.phase !== "stimulus" || state.currentIndex < 0) return;
+    const trial = state.sequence[state.currentIndex];
+    if (!trial?.responded) return;
+    const scorable = state.currentIndex >= state.n;
+    if (!scorable || gameMode !== "position") return;
+    const cell = Number(trial.value);
+    const type: TrialFeedbackType = trial.isTarget ? "hit" : "false_alarm";
+    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+    setTrialFeedback({ cell, type });
+    feedbackTimerRef.current = setTimeout(() => setTrialFeedback(null), 700);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.sequence, state.currentIndex]);
+
+  // Detect miss: when currentIndex advances, check if previous was a scorable miss
+  useEffect(() => {
+    const prevIdx = prevIndexRef.current;
+    if (prevIdx >= 0 && state.phase === "stimulus" && gameMode === "position") {
+      const prevTrial = state.sequence[prevIdx];
+      if (prevTrial && prevTrial.isTarget && !prevTrial.responded && prevIdx >= state.n) {
+        const cell = Number(prevTrial.value);
+        if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+        setTrialFeedback({ cell, type: "miss" });
+        feedbackTimerRef.current = setTimeout(() => setTrialFeedback(null), 500);
+      }
+    }
+    prevIndexRef.current = state.currentIndex;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.currentIndex]);
+
   if (state.phase === "tutorial") {
     return (
-      <TutorialOverlay
-        steps={N_BACK_TUTORIAL_STEPS}
+      <NBackInteractiveTutorial
+        n={state.n}
+        mode={gameMode}
         onComplete={() => dispatch({ type: "TUTORIAL_SKIP" })}
       />
     );
@@ -185,21 +238,13 @@ export function NBackGame({ mode }: NBackGameProps) {
           evidenceNote: t("about.nBack.evidenceNote"),
         }}
         onPlayAgain={() =>
-          dispatch({ type: "RESTART", n: initialN, mode: gameMode, difficulty: DEFAULT_DIFFICULTY, showTutorial: false })
+          dispatch({ type: "RESTART", n: initialN, mode: gameMode, difficulty: DEFAULT_DIFFICULTY, showTutorial: false, shortSession })
         }
         onHome={closeGame}
         dailyNext={dailyNext}
       />
     );
   }
-
-  const phaseLabel = (() => {
-    switch (state.phase) {
-      case "ready": return t("game.getReady");
-      case "stimulus": return gameMode === "letter" ? t("game.nBackWatchLetter") : t("game.nBackWatchPosition");
-      default: return "";
-    }
-  })();
 
   const currentTrial = state.currentIndex >= 0 ? state.sequence[state.currentIndex] : null;
   const activeCell =
@@ -209,12 +254,65 @@ export function NBackGame({ mode }: NBackGameProps) {
   const alreadyResponded = state.currentIndex >= 0 && !!state.sequence[state.currentIndex]?.responded;
   const canRespond = state.phase === "stimulus" && !alreadyResponded;
 
+  // Stimulus progress within block
+  const isPriming = state.phase === "stimulus" && state.currentIndex >= 0 && state.currentIndex < state.n;
+  const scorableStimulusNum = state.phase === "stimulus" && state.currentIndex >= state.n
+    ? state.currentIndex - state.n + 1
+    : 0;
+
+  const phaseLabel = (() => {
+    if (state.phase === "ready") return t("game.getReady");
+    if (state.phase === "stimulus") {
+      if (isPriming) return t("game.nBackPriming");
+      return gameMode === "letter" ? t("game.nBackWatchLetter") : t("game.nBackWatchPosition");
+    }
+    return "";
+  })();
+
+  // Rule line
+  const ruleText = gameMode === "letter"
+    ? t("game.nBackRuleLetter", { n: state.n })
+    : t("game.nBackRulePosition", { n: state.n });
+
+  // History strip: easy + first block
+  const showHistory =
+    state.difficulty === "easy" &&
+    state.round === 0 &&
+    state.phase === "stimulus" &&
+    state.currentIndex >= state.n;
+  const historyEntries = showHistory
+    ? state.sequence.slice(
+        Math.max(0, state.currentIndex - state.n),
+        state.currentIndex
+      )
+    : [];
+
   return (
     <GameShell
       stats={[
-        { label: t("game.nBackBlock"), value: `${state.round + 1}/${state.totalRounds}` },
-        { label: t("game.score"), value: state.correctRounds },
-        { label: t("game.level"), value: `${state.n}-${t("game.nBackSuffix")}` },
+        {
+          label: t("game.nBackBlock"),
+          value: `${state.round + 1}/${state.totalRounds}`,
+        },
+        {
+          label: t("game.score"),
+          value: state.correctRounds,
+        },
+        {
+          label: t("game.level"),
+          value: `${state.n}-${t("game.nBackSuffix")}`,
+        },
+        ...(state.phase === "stimulus" && !isPriming
+          ? [
+              {
+                label: t("game.nBackStimulusOf", {
+                  current: scorableStimulusNum,
+                  total: trialsPerBlock,
+                }),
+                value: "",
+              },
+            ]
+          : []),
       ]}
       phaseLabel={phaseLabel}
       feedbackCorrect={state.phase === "feedback" ? state.lastFeedbackCorrect : null}
@@ -222,9 +320,14 @@ export function NBackGame({ mode }: NBackGameProps) {
       onPause={() => dispatch({ type: "PAUSE" })}
       onResume={() => dispatch({ type: "RESUME" })}
       onRestart={() =>
-        dispatch({ type: "RESTART", n: initialN, mode: gameMode, difficulty: DEFAULT_DIFFICULTY, showTutorial: false })
+        dispatch({ type: "RESTART", n: initialN, mode: gameMode, difficulty: DEFAULT_DIFFICULTY, showTutorial: false, shortSession })
       }
       onQuit={closeGame}
+      footer={
+        <span className="text-xs text-[var(--color-text-secondary)] opacity-70">
+          {ruleText}
+        </span>
+      }
       dataAttributes={
         IS_E2E
           ? {
@@ -241,7 +344,40 @@ export function NBackGame({ mode }: NBackGameProps) {
           : undefined
       }
     >
-      {gameMode === "position" && <NBackGrid activeCell={activeCell} />}
+      {/* History strip — easy mode, first block */}
+      {showHistory && historyEntries.length > 0 && gameMode === "position" && (
+        <div className="flex items-center gap-2">
+          {historyEntries.map((entry, i) => (
+            <div
+              key={i}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--color-accent)]/50 bg-[color-mix(in_srgb,var(--color-accent)_15%,transparent)] text-xs font-semibold text-[var(--color-accent)]"
+            >
+              {Number(entry.value) + 1}
+            </div>
+          ))}
+        </div>
+      )}
+      {showHistory && historyEntries.length > 0 && gameMode === "letter" && (
+        <div className="flex items-center gap-2">
+          {historyEntries.map((entry, i) => (
+            <div
+              key={i}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--color-accent)]/50 bg-[color-mix(in_srgb,var(--color-accent)_15%,transparent)] text-xs font-semibold text-[var(--color-accent)]"
+              dir="ltr"
+            >
+              {String(entry.value)}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {gameMode === "position" && (
+        <NBackGrid
+          activeCell={activeCell}
+          feedbackCell={trialFeedback?.cell ?? null}
+          feedbackType={trialFeedback?.type ?? null}
+        />
+      )}
       {gameMode === "letter" && (
         <div
           className="flex h-40 w-40 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] text-7xl font-bold text-[var(--color-text-primary)]"
@@ -255,7 +391,7 @@ export function NBackGame({ mode }: NBackGameProps) {
         type="button"
         onClick={handleRespond}
         disabled={!canRespond}
-        aria-label={t("game.nBackMatch")}
+        aria-label={t("game.nBackMatchN", { n: state.n })}
         aria-pressed={alreadyResponded}
         whileTap={!reducedMotion && canRespond ? { scale: 0.93 } : {}}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -266,7 +402,7 @@ export function NBackGame({ mode }: NBackGameProps) {
             : "cursor-not-allowed opacity-35",
         ].join(" ")}
       >
-        {t("game.nBackMatch")}
+        {t("game.nBackMatchN", { n: state.n })}
       </motion.button>
     </GameShell>
   );

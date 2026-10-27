@@ -1,5 +1,6 @@
 import {
   TOTAL_BLOCKS,
+  TOTAL_BLOCKS_SHORT,
   MIN_N,
   MAX_N,
   STARTING_N,
@@ -92,7 +93,8 @@ function makeInitialState(
   n: number,
   mode: NBackMode,
   difficulty: Difficulty,
-  showTutorial: boolean
+  showTutorial: boolean,
+  shortSession?: boolean
 ): NBackState {
   return {
     phase: showTutorial ? "tutorial" : "ready",
@@ -105,7 +107,7 @@ function makeInitialState(
     falseAlarms: 0,
     correctRejections: 0,
     round: 0,
-    totalRounds: TOTAL_BLOCKS,
+    totalRounds: shortSession ? TOTAL_BLOCKS_SHORT : TOTAL_BLOCKS,
     correctRounds: 0,
     maxN: STARTING_N[difficulty] ?? n,
     blockHistory: [],
@@ -114,6 +116,7 @@ function makeInitialState(
     lastFeedbackCorrect: null,
     difficulty,
     showTutorial,
+    shortSession,
   };
 }
 
@@ -129,7 +132,8 @@ export function nBackReducer(
         action.n,
         action.mode,
         action.difficulty,
-        action.showTutorial
+        action.showTutorial,
+        action.shortSession
       );
 
     case "TUTORIAL_SKIP":
@@ -246,7 +250,8 @@ export function nBackReducer(
         action.n,
         action.mode,
         action.difficulty,
-        action.showTutorial
+        action.showTutorial,
+        action.shortSession
       );
 
     case "QUIT":

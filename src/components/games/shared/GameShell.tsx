@@ -2,10 +2,9 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "framer-motion";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { PauseMenu } from "@/components/games/shared/PauseMenu";
-import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
+import { FeedbackDisplay } from "@/components/games/shared/FeedbackDisplay";
 
 interface StatItem {
   label: string;
@@ -17,6 +16,10 @@ interface GameShellProps {
   statsExtra?: ReactNode;
   phaseLabel: string;
   feedbackCorrect: boolean | null;
+  /** "bottom" (default) renders feedback at the bottom of the shell.
+   *  "inline" suppresses the bottom feedback region so the game can
+   *  place <FeedbackDisplay> directly in its children layout. */
+  feedbackPlacement?: "bottom" | "inline";
   isPaused: boolean;
   onPause: () => void;
   onResume: () => void;
@@ -32,6 +35,7 @@ export function GameShell({
   statsExtra,
   phaseLabel,
   feedbackCorrect,
+  feedbackPlacement = "bottom",
   isPaused,
   onPause,
   onResume,
@@ -42,7 +46,6 @@ export function GameShell({
   dataAttributes,
 }: GameShellProps) {
   const t = useTranslations();
-  const reducedMotion = useReducedMotion();
 
   const spreadable = dataAttributes
     ? (Object.fromEntries(
@@ -94,49 +97,16 @@ export function GameShell({
         {children}
       </div>
 
-      {/* Feedback — single assertive live region, always in DOM */}
-      <div
-        className="flex min-h-[3.5rem] items-center justify-center"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <AnimatePresence mode="wait">
-          {feedbackCorrect !== null && (
-            <motion.span
-              key={feedbackCorrect ? "correct" : "incorrect"}
-              className={[
-                "relative inline-flex items-center justify-center text-4xl font-bold",
-                feedbackCorrect
-                  ? "text-[var(--color-correct)]"
-                  : "text-[var(--color-incorrect)]",
-              ].join(" ")}
-              initial={{ opacity: 0, scale: reducedMotion ? 1 : 0.7 }}
-              animate={{
-                opacity: 1,
-                scale: feedbackCorrect && !reducedMotion ? [0.7, 1.1, 1] : 1,
-                x: !feedbackCorrect && !reducedMotion
-                  ? [0, -8, 8, -6, 6, -3, 3, 0]
-                  : 0,
-              }}
-              exit={{ opacity: 0, scale: reducedMotion ? 1 : 0.9 }}
-              transition={reducedMotion ? { duration: 0.12 } : { duration: 0.45 }}
-            >
-              {/* Pre-rendered glow overlay — only opacity animated */}
-              <motion.span
-                aria-hidden
-                className="pointer-events-none absolute inset-[-8px] rounded-full bg-[var(--color-correct)] blur-xl"
-                animate={{
-                  opacity: feedbackCorrect && !reducedMotion ? [0, 0.5, 0.2] : 0,
-                }}
-                transition={{ duration: 0.45 }}
-              />
-              <span className="relative z-10">
-                {feedbackCorrect ? t("game.correct") : t("game.incorrect")}
-              </span>
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </div>
+      {/* Feedback — suppressed when feedbackPlacement="inline" */}
+      {feedbackPlacement !== "inline" && (
+        <div
+          className="flex min-h-[3.5rem] items-center justify-center"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <FeedbackDisplay feedbackCorrect={feedbackCorrect} />
+        </div>
+      )}
 
       {/* Footer */}
       {footer && (
