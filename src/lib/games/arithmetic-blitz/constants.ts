@@ -1,0 +1,6 @@
+export const SESSION_DURATION_SECONDS = 60;
+export const TICK_INTERVAL_REAL_MS = 1000;
+export const TICK_INTERVAL_E2E_MS = 100;
+export const READY_DURATION_MS = 800;
+export const LAST_SECONDS_THRESHOLD = 10;
+export const FEEDBACK_CLEAR_MS = 400;

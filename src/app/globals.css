@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens ─────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark light;
+
+  /* Colors — dark theme (default) */
+  --color-bg-base: #0d0f1a;
+  --color-bg-blob-1: #6c3dd4;
+  --color-bg-blob-2: #1a6cf5;
+  --color-bg-blob-3: #0ea5c0;
+
+  /* Surface (glass backgrounds) */
+  --color-surface: rgba(255, 255, 255, 0.07);
+  --color-surface-border: rgba(255, 255, 255, 0.12);
+  --color-surface-highlight: rgba(255, 255, 255, 0.15);
+  --color-surface-hover: rgba(255, 255, 255, 0.08);
+  --color-surface-active: rgba(255, 255, 255, 0.13);
+
+  /* Glass aliases — used by surfaces with backdrop-filter */
+  --color-glass-bg: rgba(255, 255, 255, 0.07);
+  --color-glass-border: rgba(255, 255, 255, 0.12);
+  --color-glass-highlight: rgba(255, 255, 255, 0.15);
+
+  /* Generic border for inline elements (slightly more opaque than glass border) */
+  --color-border: rgba(255, 255, 255, 0.16);
+
+  /* Accent / semantic */
+  --color-accent: #7c5af3;
+  --color-accent-end: #5a8af5;
+  --color-correct: #22d3a0;
+  --color-incorrect: #f25f5c;
+  --color-text-primary: rgba(255, 255, 255, 0.95);
+  --color-text-secondary: rgba(255, 255, 255, 0.55);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  /* Blur */
+  --blur-glass: 16px;
+  --blur-glass-sm: 8px;
+  --blur-blob: 120px;
+
+  /* Shadow */
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 var(--color-surface-highlight);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 var(--color-surface-highlight);
+  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 var(--color-surface-highlight);
+
+  /* Font families (populated by next/font variables) */
+  --font-latin: var(--font-inter, system-ui, sans-serif);
+  --font-hebrew: var(--font-heebo, system-ui, sans-serif);
+
+  /* Animation durations */
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
 }
 
+/* Light theme override */
+html.light {
+  color-scheme: light;
+  --color-bg-base: #f0f2fc;
+  --color-bg-blob-1: #8b6af8;
+  --color-bg-blob-2: #4a8cf7;
+  --color-bg-blob-3: #3ec4de;
+
+  --color-surface: rgba(255, 255, 255, 0.55);
+  --color-surface-border: rgba(0, 0, 0, 0.1);
+  --color-surface-highlight: rgba(255, 255, 255, 0.85);
+  --color-surface-hover: rgba(0, 0, 0, 0.05);
+  --color-surface-active: rgba(0, 0, 0, 0.09);
+
+  --color-glass-bg: rgba(255, 255, 255, 0.6);
+  --color-glass-border: rgba(0, 0, 0, 0.1);
+  --color-glass-highlight: rgba(255, 255, 255, 0.9);
+
+  --color-border: rgba(0, 0, 0, 0.14);
+
+  --color-accent: #6844e8;
+  --color-accent-end: #4472f5;
+  --color-correct: #0e9470;
+  --color-incorrect: #c94440;
+  --color-text-primary: rgba(10, 12, 28, 0.95);
+  --color-text-secondary: rgba(10, 12, 28, 0.55);
+
+  --shadow-glass: 0 4px 24px rgba(80, 80, 140, 0.18),
+    inset 0 1px 0 var(--color-surface-highlight);
+  --shadow-card: 0 2px 8px rgba(80, 80, 140, 0.12),
+    inset 0 1px 0 var(--color-surface-highlight);
+  --shadow-elevated: 0 8px 32px rgba(80, 80, 140, 0.24),
+    inset 0 1px 0 var(--color-surface-highlight);
+}
+
+/* Tailwind v4 theme registration */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-base: var(--color-bg-base);
+  --color-bg-blob-1: var(--color-bg-blob-1);
+  --color-bg-blob-2: var(--color-bg-blob-2);
+  --color-bg-blob-3: var(--color-bg-blob-3);
+  --color-surface: var(--color-surface);
+  --color-surface-border: var(--color-surface-border);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-surface-active: var(--color-surface-active);
+  --color-glass-bg: var(--color-glass-bg);
+  --color-glass-border: var(--color-glass-border);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-accent-end: var(--color-accent-end);
+  --color-correct: var(--color-correct);
+  --color-incorrect: var(--color-incorrect);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Glass utility ──────────────────────────────────────────────────── */
+.glass {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-glass);
+}
+
+/* Solid fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass {
+    background: rgba(20, 22, 40, 0.92);
+  }
+  html.light .glass {
+    background: rgba(240, 242, 252, 0.96);
   }
 }
 
+/* Surface card — same look as .glass but no backdrop-filter.
+   Use on scroll-heavy list sections (Statistics, Settings) to keep
+   concurrent backdrop-filter layers ≤ 3 (blob + header + one dialog). */
+.surface-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+html.light .surface-card {
+  background: var(--color-surface);
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--color-bg-base);
+}
+html.light {
+  background-color: var(--color-bg-base);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  min-block-size: 100vh;
+}
+
+/* Numbers always LTR, even in RTL contexts */
+.ltr-nums {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* True/False timer bar */
+@keyframes tof-timer-shrink {
+  from { transform: scaleX(1); background: var(--color-accent); }
+  70% { background: var(--color-accent); }
+  to { transform: scaleX(0); background: var(--color-incorrect); }
+}
+.tof-timer-fill {
+  animation: tof-timer-shrink linear forwards;
 }

@@ -1,0 +1,254 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: accessibility.spec.ts >> Accessibility: axe scan — games (paused state) >> paired-associates — paused game, axe clean
+- Location: e2e/accessibility.spec.ts:52:9
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByRole('button', { name: /pause/i })
+Expected: visible
+Timeout: 10000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" getByRole('button', { name: /pause/i }) with timeout 10000ms
+  - waiting for getByRole('button', { name: /pause/i })
+
+```
+
+```yaml
+- banner:
+  - link "Memora":
+    - /url: /en
+  - navigation:
+    - link "Statistics":
+      - /url: /en/statistics
+    - link "Settings":
+      - /url: /en/settings
+    - group "Language":
+      - button "EN" [pressed]
+      - button "RU"
+      - button "HE"
+- main:
+  - heading "Daily Training" [level=1]
+  - button "Start Daily Training"
+  - heading "Memory" [level=2]
+  - button "🔢 Digit Span Verbal short-term memory":
+    - text: 🔢
+    - heading "Digit Span" [level=2]
+    - paragraph: Verbal short-term memory
+  - button "🟦 Corsi Blocks Visuospatial memory":
+    - text: 🟦
+    - heading "Corsi Blocks" [level=2]
+    - paragraph: Visuospatial memory
+  - button "🔄 N-Back Working memory updating":
+    - text: 🔄
+    - heading "N-Back" [level=2]
+    - paragraph: Working memory updating
+  - button "🔷 Pattern Matrix Visual pattern memory":
+    - text: 🔷
+    - heading "Pattern Matrix" [level=2]
+    - paragraph: Visual pattern memory
+  - button "🔗 Paired Associates Associative memory":
+    - text: 🔗
+    - heading "Paired Associates" [level=2]
+    - paragraph: Associative memory
+  - heading "Mental Arithmetic" [level=2]
+  - button "Start Arithmetic Training"
+  - button "⚡ Arithmetic Blitz Mental calculation speed":
+    - text: ⚡
+    - heading "Arithmetic Blitz" [level=2]
+    - paragraph: Mental calculation speed
+  - button "🔗 Arithmetic Chain Working memory arithmetic":
+    - text: 🔗
+    - heading "Arithmetic Chain" [level=2]
+    - paragraph: Working memory arithmetic
+  - button "✓✗ True or False Verify arithmetic at speed":
+    - text: ✓✗
+    - heading "True or False" [level=2]
+    - paragraph: Verify arithmetic at speed
+- alert
+- main "Choose difficulty":
+  - heading "Paired Associates" [level=1]
+  - paragraph: Choose difficulty
+  - button "1 Easy A relaxed pace — good for warming up"
+  - button "2 Medium The standard challenge" [pressed]
+  - button "3 Hard Push your associative memory limits"
+  - paragraph: Press 1–3 to select, Enter to start
+  - button "Quit"
+  - button "Start"
+```
+
+# Test source
+
+```ts
+  1   | import { test, expect } from "@playwright/test";
+  2   | import AxeBuilder from "@axe-core/playwright";
+  3   | 
+  4   | const STATIC_SCREENS = [
+  5   |   { path: "/en", name: "home-en" },
+  6   |   { path: "/en/statistics", name: "statistics-en" },
+  7   |   { path: "/en/settings", name: "settings-en" },
+  8   |   { path: "/he", name: "home-he" },
+  9   |   { path: "/he/statistics", name: "statistics-he" },
+  10  |   { path: "/he/settings", name: "settings-he" },
+  11  | ];
+  12  | 
+  13  | test.describe("Accessibility: axe scan — static screens", () => {
+  14  |   for (const { path, name } of STATIC_SCREENS) {
+  15  |     test(`${name} has no critical/serious violations`, async ({ page }) => {
+  16  |       await page.goto(path);
+  17  |       await page.waitForLoadState("networkidle");
+  18  |       await page.waitForTimeout(600);
+  19  |       const results = await new AxeBuilder({ page })
+  20  |         .withTags(["wcag2a", "wcag2aa"])
+  21  |         .analyze();
+  22  |       const serious = results.violations.filter(
+  23  |         (v) => v.impact === "critical" || v.impact === "serious"
+  24  |       );
+  25  |       if (serious.length > 0) {
+  26  |         console.log(
+  27  |           `Violations on ${name}:`,
+  28  |           serious.map((v) => ({
+  29  |             id: v.id,
+  30  |             impact: v.impact,
+  31  |             help: v.help,
+  32  |             nodes: v.nodes.length,
+  33  |           }))
+  34  |         );
+  35  |       }
+  36  |       expect(serious, `Critical/serious violations on ${name}`).toHaveLength(0);
+  37  |     });
+  38  |   }
+  39  | });
+  40  | 
+  41  | test.describe("Accessibility: axe scan — games (paused state)", () => {
+  42  |   // Pause the game before scanning to get a fully stable DOM (no active animations)
+  43  |   const GAMES = [
+  44  |     { name: "digit-span", text: "Digit Span" },
+  45  |     { name: "corsi-blocks", text: "Corsi Blocks" },
+  46  |     { name: "n-back", text: "N-Back" },
+  47  |     { name: "pattern-matrix", text: "Pattern Matrix" },
+  48  |     { name: "paired-associates", text: "Paired Associates" },
+  49  |   ];
+  50  | 
+  51  |   for (const game of GAMES) {
+  52  |     test(`${game.name} — paused game, axe clean`, async ({ page }) => {
+  53  |       test.setTimeout(60_000);
+  54  |       await page.goto("/en");
+  55  |       await page.getByText(game.text).click();
+  56  |       // Skip tutorial if present (showTutorial may be false on repeat plays)
+  57  |       await page.getByRole("button", { name: /skip|let's go/i }).first().click({ timeout: 2000 }).catch(() => {});
+  58  |       // Wait for the pause button to be visible — confirms GameShell is mounted
+> 59  |       await expect(page.getByRole("button", { name: /pause/i })).toBeVisible({ timeout: 10_000 });
+      |                                                                  ^ Error: expect(locator).toBeVisible() failed
+  60  |       // Pause the game to freeze animations, giving axe a stable DOM
+  61  |       await page.getByRole("button", { name: /pause/i }).click();
+  62  |       await page.waitForTimeout(400);
+  63  | 
+  64  |       const results = await new AxeBuilder({ page })
+  65  |         .withTags(["wcag2a", "wcag2aa"])
+  66  |         .analyze();
+  67  |       const serious = results.violations.filter(
+  68  |         (v) => v.impact === "critical" || v.impact === "serious"
+  69  |       );
+  70  |       if (serious.length > 0) {
+  71  |         console.log(
+  72  |           `${game.name} violations:`,
+  73  |           serious.map((v) => ({ id: v.id, help: v.help, nodes: v.nodes.length }))
+  74  |         );
+  75  |       }
+  76  |       expect(serious, `${game.name} critical/serious violations`).toHaveLength(0);
+  77  |     });
+  78  |   }
+  79  | });
+  80  | 
+  81  | test.describe("Accessibility: focus trap and keyboard navigation", () => {
+  82  |   test("pause menu traps focus and Escape closes it", async ({ page }) => {
+  83  |     test.setTimeout(60_000);
+  84  |     await page.goto("/en");
+  85  |     await page.getByText("Corsi Blocks").click();
+  86  |     await page.getByRole("button", { name: /skip|let's go/i }).first().click({ timeout: 2000 }).catch(() => {});
+  87  |     // Wait for the game board (GameShell mounted and board rendered)
+  88  |     await expect(page.getByRole("button", { name: /pause/i })).toBeVisible({ timeout: 10_000 });
+  89  |     await page.getByRole("button", { name: /pause/i }).click();
+  90  |     await page.waitForTimeout(300);
+  91  | 
+  92  |     const dialog = page.getByRole("dialog");
+  93  |     await expect(dialog).toBeVisible();
+  94  | 
+  95  |     // Focus must be inside dialog
+  96  |     const focused = await page.evaluate(() => {
+  97  |       const d = document.querySelector('[role="dialog"]');
+  98  |       return d ? d.contains(document.activeElement) : false;
+  99  |     });
+  100 |     expect(focused).toBe(true);
+  101 | 
+  102 |     // Escape closes the dialog
+  103 |     await page.keyboard.press("Escape");
+  104 |     await page.waitForTimeout(300);
+  105 |     await expect(dialog).not.toBeVisible();
+  106 |   });
+  107 | 
+  108 |   test("settings reset dialog traps focus and Escape cancels", async ({ page }) => {
+  109 |     await page.goto("/en/settings");
+  110 |     // Find and click the reset button
+  111 |     const resetButtons = page.getByRole("button", { name: /reset/i });
+  112 |     await resetButtons.last().click();
+  113 |     await page.waitForTimeout(300);
+  114 | 
+  115 |     const dialog = page.getByRole("dialog");
+  116 |     await expect(dialog).toBeVisible();
+  117 | 
+  118 |     // Focus must be inside dialog
+  119 |     const focused = await page.evaluate(() => {
+  120 |       const d = document.querySelector('[role="dialog"]');
+  121 |       return d ? d.contains(document.activeElement) : false;
+  122 |     });
+  123 |     expect(focused).toBe(true);
+  124 | 
+  125 |     // Escape closes dialog without resetting
+  126 |     await page.keyboard.press("Escape");
+  127 |     await page.waitForTimeout(300);
+  128 |     await expect(dialog).not.toBeVisible();
+  129 |   });
+  130 | 
+  131 |   test("tutorial Escape skips tutorial", async ({ page }) => {
+  132 |     // Force tutorial to show by clearing sessions
+  133 |     await page.addInitScript(() => {
+  134 |       try {
+  135 |         const raw = localStorage.getItem("memora_v1");
+  136 |         if (raw) {
+  137 |           const d = JSON.parse(raw);
+  138 |           if (d?.state?.sessions) {
+  139 |             d.state.sessions = [];
+  140 |             localStorage.setItem("memora_v1", JSON.stringify(d));
+  141 |           }
+  142 |         }
+  143 |       } catch {}
+  144 |     });
+  145 |     await page.goto("/en");
+  146 |     await page.locator("article").filter({ hasText: /corsi/i }).first().click();
+  147 |     await page.waitForTimeout(400);
+  148 | 
+  149 |     const dialog = page.locator('[role="dialog"]').first();
+  150 |     if (await dialog.isVisible()) {
+  151 |       // Tutorial dialog is open — Escape should close it
+  152 |       const focusedBefore = await page.evaluate(() => {
+  153 |         const d = document.querySelector('[role="dialog"]');
+  154 |         return d ? d.contains(document.activeElement) : false;
+  155 |       });
+  156 |       expect(focusedBefore).toBe(true);
+  157 | 
+  158 |       await page.keyboard.press("Escape");
+  159 |       await page.waitForTimeout(300);
+```

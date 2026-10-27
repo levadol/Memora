@@ -12,7 +12,15 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated coverage reports
+    "coverage/**",
   ]),
+  {
+    rules: {
+      // Allow intentionally unused variables prefixed with _
+      "@typescript-eslint/no-unused-vars": ["warn", { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }],
+    },
+  },
 ]);
 
 export default eslintConfig;

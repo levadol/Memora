@@ -1,0 +1,403 @@
+{
+  "app": {
+    "title": "Memora",
+    "tagline": "Train your memory"
+  },
+  "nav": {
+    "statistics": "Statistics",
+    "settings": "Settings"
+  },
+  "home": {
+    "dailyTraining": "Daily Training",
+    "streak": "{count, plural, one {# day streak} other {# day streak}}",
+    "startTraining": "Start Daily Training",
+    "dailyProgress": "Game {current} of {total}",
+    "continueTraining": "Continue Training",
+    "dailySummaryTitle": "Daily training complete!",
+    "dailySummaryMessage": "You finished all {total} exercises for today. Well done!",
+    "dailyDone": "Done",
+    "memorySection": "Memory",
+    "arithmeticSection": "Mental Arithmetic",
+    "startArithmeticTraining": "Start Arithmetic Training",
+    "continueArithmeticTraining": "Continue Training",
+    "arithmeticDailyProgress": "Game {current} of {total}",
+    "arithmeticDailySummaryTitle": "Arithmetic training complete!",
+    "arithmeticDailySummaryMessage": "You finished all {total} arithmetic exercises today. Well done!",
+    "arithmeticDailyDone": "Done"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "sound": "Sound",
+    "soundEnabled": "Enable sound",
+    "volume": "Volume",
+    "reducedMotion": "Reduce motion",
+    "accessibility": "Accessibility",
+    "theme": "Theme",
+    "dark": "Dark",
+    "light": "Light",
+    "resetData": "Reset all data",
+    "confirmReset": "This will permanently delete all your progress. Continue?",
+    "resetConfirmYes": "Yes, reset",
+    "cancel": "Cancel",
+    "system": "System",
+    "defaultDifficulty": "Default difficulty",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "stats": {
+    "empty": "No sessions yet. Play a game to see your statistics.",
+    "overview": "Overview",
+    "currentStreak": "Current streak",
+    "longestStreak": "Longest streak",
+    "totalSessions": "Total sessions",
+    "activeDays": "Active days",
+    "activityCalendar": "Activity calendar",
+    "personalBest": "Personal best",
+    "noDataForGame": "Not enough data yet — play a few more sessions.",
+    "achievements": "Achievements",
+    "avgHits": "Avg. hits",
+    "avgMisses": "Avg. misses",
+    "avgFA": "Avg. false alarms",
+    "avgCR": "Avg. correct rejections",
+    "days7": "7 days",
+    "days30": "30 days"
+  },
+  "achievements": {
+    "firstSession": {
+      "title": "First Step",
+      "desc": "Complete your first training session."
+    },
+    "sessions10": {
+      "title": "Committed",
+      "desc": "Complete 10 training sessions."
+    },
+    "allGames": {
+      "title": "Explorer",
+      "desc": "Play all five games at least once."
+    },
+    "digitSpan8": {
+      "title": "Memory Master",
+      "desc": "Reach a digit span of 8 in Digit Span."
+    },
+    "corsi8": {
+      "title": "Spatial Navigator",
+      "desc": "Reach a Corsi span of 8 in Corsi Blocks."
+    },
+    "nBack3": {
+      "title": "Working Memory Pro",
+      "desc": "Reach 3-back in the N-Back game."
+    },
+    "pattern10": {
+      "title": "Pattern Virtuoso",
+      "desc": "Reach level 10 in Pattern Matrix."
+    },
+    "paPerfect": {
+      "title": "Perfect Recall",
+      "desc": "Score 100% accuracy in a Paired Associates session."
+    },
+    "streak3": {
+      "title": "On a Roll",
+      "desc": "Train 3 days in a row."
+    },
+    "streak7": {
+      "title": "Weekly Champion",
+      "desc": "Train 7 days in a row."
+    },
+    "blitzFirst": {
+      "title": "Speed Starter",
+      "desc": "Complete your first Arithmetic Blitz session."
+    },
+    "blitz20": {
+      "title": "Lightning Calculator",
+      "desc": "Score 20 correct answers in a single Blitz session."
+    },
+    "chainFirst": {
+      "title": "Chain Reaction",
+      "desc": "Complete your first Arithmetic Chain session."
+    },
+    "chainLength6": {
+      "title": "Long Chain",
+      "desc": "Reach a chain length of 6 in Arithmetic Chain."
+    },
+    "tofFirst": {
+      "title": "Truth Seeker",
+      "desc": "Complete your first True or False session."
+    },
+    "tofPerfect": {
+      "title": "Perfect Verification",
+      "desc": "Score 100% accuracy in a True or False session."
+    }
+  },
+  "games": {
+    "digitSpan": {
+      "name": "Digit Span",
+      "tagline": "Verbal short-term memory",
+      "tutorial": {
+        "step1Title": "Watch the digits",
+        "step1Body": "Digits appear one at a time. Watch carefully — you'll need to enter them back.",
+        "step2Title": "Enter them back",
+        "step2Body": "After all digits are shown, tap each digit in the same order. In Backward mode, enter them in reverse order.",
+        "step3Title": "Keep going further",
+        "step3Body": "Get it right and the sequence grows longer. The game ends after 10 rounds."
+      }
+    },
+    "corsiBlocks": {
+      "name": "Corsi Blocks",
+      "tagline": "Visuospatial memory",
+      "tutorial": {
+        "step1Title": "Watch the blocks light up",
+        "step1Body": "Blocks will flash in a sequence. Watch carefully — you'll need to repeat it.",
+        "step2Title": "Tap the same order",
+        "step2Body": "After the sequence ends, tap each block in the exact same order it was shown.",
+        "step3Title": "Keep going further",
+        "step3Body": "Get it right and the sequence grows longer. The game ends after 10 rounds."
+      }
+    },
+    "nBack": {
+      "name": "N-Back",
+      "tagline": "Working memory updating",
+      "letters": "B,D,F,G,H,K,L",
+      "tutorial": {
+        "step1Title": "Watch the stimulus",
+        "step1Body": "Stimuli appear one at a time. Decide whether each one matches the stimulus from N steps earlier.",
+        "step2Title": "Press Match",
+        "step2Body": "Tap Match (or press Space / M) when the current stimulus matches the one N steps ago. If it does not match, do nothing.",
+        "step3Title": "The level adjusts",
+        "step3Body": "If you respond accurately the N-Back level increases. If you struggle it decreases. Stay near your limit."
+      }
+    },
+    "patternMatrix": {
+      "name": "Pattern Matrix",
+      "tagline": "Visual pattern memory",
+      "tutorial": {
+        "step1Title": "Memorise the pattern",
+        "step1Body": "A grid of highlighted cells will appear briefly. Study it — you'll need to reproduce it.",
+        "step2Title": "Tap the same cells",
+        "step2Body": "After the grid clears, tap every cell that was highlighted. Use arrow keys to navigate, Space or Enter to toggle.",
+        "step3Title": "Keep going further",
+        "step3Body": "Get it right and more cells are added. Get it wrong twice in a row and the count drops. Game ends after 10 rounds."
+      }
+    },
+    "pairedAssociates": {
+      "name": "Paired Associates",
+      "tagline": "Associative memory",
+      "tutorial": {
+        "step1Title": "Study the pairs",
+        "step1Body": "An abstract shape and a word appear together. Study each pair carefully — you'll need to recall which word went with each shape.",
+        "step2Title": "Pick the right word",
+        "step2Body": "A shape appears alone. Tap the word it was paired with from the four options shown.",
+        "step3Title": "The difficulty adapts",
+        "step3Body": "Get all pairs right and more pairs are added next round. Make mistakes twice in a row and the number drops. Complete 6 rounds."
+      }
+    },
+    "arithmeticBlitz": {
+      "name": "Arithmetic Blitz",
+      "tagline": "Mental calculation speed",
+      "tutorial": {
+        "step1Title": "Solve arithmetic problems",
+        "step1Body": "Problems appear one at a time. Type the answer using your keyboard or the on-screen keypad. Work as fast as you can!",
+        "step2Title": "Auto-submit when complete",
+        "step2Body": "Your answer submits automatically when you've typed enough digits. For negative answers, type the minus sign first.",
+        "step3Title": "The difficulty adapts",
+        "step3Body": "Answer 3 correct in a row and problems get harder. Miss 2 in a row and they get easier. You have 60 seconds — go!"
+      }
+    },
+    "arithmeticChain": {
+      "name": "Arithmetic Chain",
+      "tagline": "Working memory arithmetic",
+      "tutorial": {
+        "step1Title": "Follow the chain",
+        "step1Body": "A starting number appears, then arithmetic operations one by one. Keep the running total in your head.",
+        "step2Title": "Enter the final result",
+        "step2Body": "After the last operation, enter what the final result is. You will not see the intermediate steps.",
+        "step3Title": "Chains grow and shrink",
+        "step3Body": "A correct answer adds one more step to the chain. Two errors in a row and the chain shortens. Complete 10 rounds."
+      }
+    },
+    "arithmeticTof": {
+      "name": "True or False",
+      "tagline": "Verify arithmetic at speed",
+      "tutorial": {
+        "step1Title": "Is the equation correct?",
+        "step1Body": "An arithmetic equation appears on screen. Decide as fast as you can whether it is correct or not.",
+        "step2Title": "Press True or False",
+        "step2Body": "Press T or the left button for True, F or the right button for False. Arrow keys follow the visual button positions.",
+        "step3Title": "Beat the clock",
+        "step3Body": "Each equation has a time limit. Answering quickly and accurately tightens the pressure. You have 30 equations."
+      }
+    }
+  },
+  "game": {
+    "pause": "Pause",
+    "resume": "Resume",
+    "restart": "Restart",
+    "quit": "Quit",
+    "score": "Score",
+    "level": "Level",
+    "round": "Round",
+    "span": "Span",
+    "skip": "Skip",
+    "next": "Next",
+    "letsGo": "Let's go!",
+    "getReady": "Get ready…",
+    "watchSequence": "Watch the sequence",
+    "repeatSequence": "Repeat the sequence",
+    "correct": "Correct!",
+    "incorrect": "Incorrect",
+    "blockLabel": "Block {index}",
+    "cellLabel": "Cell {index}",
+    "watchPattern": "Watch the pattern",
+    "reproducePattern": "Reproduce the pattern",
+    "watchDigits": "Watch the digits",
+    "enterDigits": "Enter the digits",
+    "enterDigitsBackward": "Enter the digits in reverse",
+    "forward": "Forward",
+    "backward": "Backward",
+    "mode": "Mode",
+    "digitAriaLabel": "Digit {digit}",
+    "enteredDigits": "Entered digits",
+    "digitPad": "Digit pad",
+    "nBackMatch": "Match",
+    "nBackBlock": "Block",
+    "nBackSuffix": "back",
+    "nBackWatchPosition": "Watch the position",
+    "nBackWatchLetter": "Watch the letter",
+    "nBackLetter": "Letter",
+    "paStudy": "Study the pairs",
+    "paTest": "Which word goes here?",
+    "paPair": "Pair {index} of {total}",
+    "paRound": "Round",
+    "paPairs": "Pairs",
+    "blitzScore": "Correct",
+    "blitzTimer": "Time",
+    "blitzPlaying": "Type the answer!",
+    "chainMaxLength": "Max chain",
+    "chainRound": "Round",
+    "chainShowingPhase": "Follow the chain…",
+    "chainInputPhase": "What is the result?",
+    "tofItem": "Item",
+    "tofScore": "Accuracy",
+    "tofShowingPhase": "True or False?",
+    "tofTrue": "True",
+    "tofFalse": "False",
+    "tofHits": "Hits",
+    "tofFalseAlarms": "False alarms",
+    "tofMeanRt": "Mean RT"
+  },
+  "results": {
+    "title": "Session Complete",
+    "score": "Score",
+    "accuracy": "Accuracy",
+    "maxSpan": "Max Span",
+    "maxLevel": "Max Level",
+    "duration": "Duration",
+    "personalBest": "Personal Best",
+    "newRecord": "New Record!",
+    "vsLastSession": "vs last session",
+    "playAgain": "Play Again",
+    "home": "Home",
+    "about": "About this exercise",
+    "nextDailyGame": "Next game →",
+    "viewDailySummary": "View summary →"
+  },
+  "about": {
+    "patternMatrix": {
+      "memorySystem": "Trains visual pattern memory — the ability to encode and recall the spatial layout of a grid pattern.",
+      "researchBasis": "Based on the Visual Pattern Test (Della Sala et al., 1997), a widely used measure of visual short-term memory that separates spatial from verbal encoding.",
+      "evidenceNote": "Consistent practice on this task reliably improves performance on the task itself. Transfer to everyday visual abilities or other cognitive domains is debated in the research literature and has not been definitively established. This app does not claim to raise IQ, prevent cognitive decline, or improve general intelligence."
+    },
+    "digitSpan": {
+      "memorySystem": "Trains verbal short-term memory and working memory — the ability to hold and mentally manipulate sequences of spoken or written digits.",
+      "researchBasis": "Based on the Digit Span subtest of the Wechsler intelligence scales and broader research on phonological loop capacity (Baddeley & Hitch, 1974). One of the most widely used measures of verbal short-term memory capacity in clinical and research settings.",
+      "evidenceNote": "Consistent practice on this task reliably improves performance on the task itself. Transfer to general memory, academic performance, or other cognitive domains is debated in the research literature and has not been definitively established. This app does not claim to raise IQ, prevent cognitive decline, or improve general intelligence."
+    },
+    "nBack": {
+      "memorySystem": "Trains working memory updating — the ability to hold and continuously update information over seconds.",
+      "researchBasis": "Based on the N-Back task (Kirchner, 1958), widely used in working memory research and cognitive assessment.",
+      "evidenceNote": "Consistent practice reliably improves N-Back performance. Whether gains transfer to general working memory or everyday cognitive abilities remains actively debated in the literature."
+    },
+    "pairedAssociates": {
+      "memorySystem": "Trains associative memory — the ability to form and retrieve arbitrary links between unrelated items.",
+      "researchBasis": "Based on the Paired Associates Learning paradigm, used extensively in neuropsychological assessment (e.g., Baddeley et al., 1994) and as a sensitive measure of hippocampal-dependent memory.",
+      "evidenceNote": "Consistent practice on this task reliably improves performance on the task itself. Transfer to everyday memory or other cognitive domains is debated in the research literature and has not been definitively established. This app does not claim to raise IQ, prevent cognitive decline, or improve general intelligence."
+    },
+    "arithmeticBlitz": {
+      "memorySystem": "Trains mental arithmetic speed and numerical fluency — the ability to rapidly execute arithmetic operations without paper or calculator.",
+      "researchBasis": "Based on mental arithmetic research linking numerical fluency to working memory capacity and executive function (Hitch, 1978; Ashcraft & Stazyk, 1981). Timed arithmetic tasks are used as measures of processing speed in cognitive assessments.",
+      "evidenceNote": "Consistent practice on timed arithmetic reliably improves mental calculation speed. Transfer to general mathematical ability, academic performance, or other cognitive domains is debated in the literature. This app does not claim to raise IQ, prevent cognitive decline, or improve general intelligence."
+    },
+    "corsiBlocks": {
+      "memorySystem": "Trains visuospatial short-term memory — the ability to hold and mentally manipulate spatial locations.",
+      "researchBasis": "Based on the Corsi Block-Tapping Test (Corsi, 1972; Milner, 1971), a standard neuropsychological measure of visuospatial span widely used in clinical and research settings.",
+      "evidenceNote": "Consistent practice on this task reliably improves performance on the task itself. Transfer to everyday visuospatial abilities or other cognitive domains is debated in the research literature and has not been definitively established. This app does not claim to raise IQ, prevent cognitive decline, or improve general intelligence."
+    },
+    "arithmeticChain": {
+      "memorySystem": "Trains working memory and mental arithmetic: you must hold and update a running total in mind while processing each new operation.",
+      "researchBasis": "Based on complex-span and updating paradigms used in working memory research. Requires simultaneous storage and processing, placing heavy demands on the central executive component of working memory.",
+      "evidenceNote": "Consistent practice on this task reliably improves performance on similar mental arithmetic tasks. Transfer to general working memory capacity or other cognitive domains is not established. This app does not claim to raise IQ, prevent cognitive decline, or improve general intelligence."
+    },
+    "arithmeticTof": {
+      "memorySystem": "Trains inhibitory control and processing speed — the ability to quickly verify arithmetic statements and suppress impulsive responses under time pressure.",
+      "researchBasis": "Based on arithmetic verification tasks widely used in cognitive psychology. Verification speed correlates with working memory capacity and numerical fluency (Zbrodoff & Logan, 2005).",
+      "evidenceNote": "Consistent practice reliably improves arithmetic verification speed. Transfer to general mathematical ability or other cognitive domains remains under investigation. This app does not claim to raise IQ, prevent cognitive decline, or improve general intelligence."
+    }
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "difficultyPicker": {
+    "title": "Choose difficulty",
+    "start": "Start",
+    "keyHint": "Press 1–3 to select, Enter to start",
+    "games": {
+      "digitSpan": {
+        "easy": "A relaxed pace — good for warming up",
+        "medium": "The standard challenge",
+        "hard": "Push your memory limits"
+      },
+      "corsiBlocks": {
+        "easy": "A relaxed pace — good for warming up",
+        "medium": "The standard challenge",
+        "hard": "Push your spatial memory limits"
+      },
+      "nBack": {
+        "easy": "A relaxed pace — good for warming up",
+        "medium": "The standard challenge",
+        "hard": "Push your working memory limits"
+      },
+      "patternMatrix": {
+        "easy": "A relaxed pace — good for warming up",
+        "medium": "The standard challenge",
+        "hard": "Push your pattern memory limits"
+      },
+      "pairedAssociates": {
+        "easy": "A relaxed pace — good for warming up",
+        "medium": "The standard challenge",
+        "hard": "Push your associative memory limits"
+      },
+      "arithmeticBlitz": {
+        "easy": "Small numbers, addition and subtraction only",
+        "medium": "Larger numbers, multiplication included",
+        "hard": "Full arithmetic — push your mental speed"
+      },
+      "arithmeticChain": {
+        "easy": "Short chains with small steps",
+        "medium": "Medium chains with varied operations",
+        "hard": "Long chains — full working memory load"
+      },
+      "arithmeticTof": {
+        "easy": "Simple equations, generous time",
+        "medium": "Moderate equations, shorter time",
+        "hard": "Complex equations under time pressure"
+      }
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong"
+  }
+}
